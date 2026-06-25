@@ -1,28 +1,21 @@
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">Dashboard Admin</h2>
-    </x-slot>
-
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                @foreach (['umkm' => 'UMKM', 'produk' => 'Produk', 'customer' => 'Customer', 'transaksi' => 'Transaksi'] as $key => $label)
-                    <div class="bg-white p-6 rounded-lg shadow-sm">
-                        <div class="text-3xl font-bold text-indigo-600">{{ $stats[$key] }}</div>
-                        <div class="text-sm text-gray-500 mt-1">{{ $label }}</div>
-                    </div>
-                @endforeach
+<x-admin-layout header="Dashboard Admin">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        @foreach (['umkm' => 'UMKM', 'produk' => 'Produk', 'customer' => 'Customer', 'transaksi' => 'Transaksi'] as $key => $label)
+            <div class="bg-white p-6 rounded-lg shadow-sm">
+                <div class="text-3xl font-bold text-indigo-600">{{ $stats[$key] }}</div>
+                <div class="text-sm text-gray-500 mt-1">{{ $label }}</div>
             </div>
+        @endforeach
+    </div>
 
-            <div class="bg-white mt-6 p-6 rounded-lg shadow-sm text-gray-600">
-                <p class="font-medium mb-2">Modul admin (akan dibangun bertahap):</p>
-                <ul class="list-disc list-inside text-sm space-y-1">
-                    <li>Master: Users, Bank, Jenis Usaha, Jenis Pengeluaran, Kategori Produk</li>
-                    <li>UMKM &amp; Rekening</li>
-                    <li>Produk &amp; Stok</li>
-                    <li>Transaksi masuk/keluar, Laba-rugi, Pendapatan</li>
-                </ul>
-            </div>
+    <div class="bg-white mt-6 p-6 rounded-lg shadow-sm">
+        <h2 class="font-semibold mb-3">Master Data</h2>
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-3 text-sm">
+            <a href="{{ route('admin.users.index') }}" class="px-4 py-3 rounded-md border border-gray-200 hover:border-indigo-400 hover:text-indigo-600">Users</a>
+            <a href="{{ route('admin.bank.index') }}" class="px-4 py-3 rounded-md border border-gray-200 hover:border-indigo-400 hover:text-indigo-600">Bank</a>
+            <a href="{{ route('admin.jenis-usaha.index') }}" class="px-4 py-3 rounded-md border border-gray-200 hover:border-indigo-400 hover:text-indigo-600">Jenis Usaha</a>
+            <a href="{{ route('admin.jenis-pengeluaran.index') }}" class="px-4 py-3 rounded-md border border-gray-200 hover:border-indigo-400 hover:text-indigo-600">Jenis Pengeluaran</a>
+            <a href="{{ route('admin.kategori-produk.index') }}" class="px-4 py-3 rounded-md border border-gray-200 hover:border-indigo-400 hover:text-indigo-600">Kategori Produk</a>
         </div>
     </div>
-</x-app-layout>
+</x-admin-layout>

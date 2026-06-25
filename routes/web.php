@@ -1,6 +1,12 @@
 <?php
 
+use App\Http\Controllers\Admin\BankController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboard;
+use App\Http\Controllers\Admin\JenisPengeluaranController;
+use App\Http\Controllers\Admin\JenisUsahaController;
+use App\Http\Controllers\Admin\KategoriProdukAtributController;
+use App\Http\Controllers\Admin\KategoriProdukController;
+use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Customer\HomeController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
@@ -19,6 +25,19 @@ Route::get('/dashboard', [DashboardController::class, 'index'])
 // ---- Admin ----
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [AdminDashboard::class, 'index'])->name('dashboard');
+
+    // Master Data
+    Route::resource('users', UserController::class)->except('show');
+    Route::resource('bank', BankController::class)->only(['index', 'store', 'edit', 'update', 'destroy']);
+    Route::resource('jenis-usaha', JenisUsahaController::class)->only(['index', 'store', 'edit', 'update', 'destroy']);
+    Route::resource('jenis-pengeluaran', JenisPengeluaranController::class)->only(['index', 'store', 'edit', 'update', 'destroy']);
+    Route::resource('kategori-produk', KategoriProdukController::class)->only(['index', 'store', 'edit', 'update', 'destroy']);
+
+    // Atribut (nested di bawah kategori produk)
+    Route::post('kategori-produk/{kategori_produk}/atribut', [KategoriProdukAtributController::class, 'store'])
+        ->name('kategori-produk.atribut.store');
+    Route::delete('atribut/{atribut}', [KategoriProdukAtributController::class, 'destroy'])
+        ->name('kategori-produk.atribut.destroy');
 });
 
 // ---- UMKM ----
