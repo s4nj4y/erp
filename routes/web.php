@@ -18,6 +18,10 @@ use App\Http\Controllers\Customer\TransaksiController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Umkm\DashboardController as UmkmDashboard;
+use App\Http\Controllers\Umkm\ProdukController as UmkmProduk;
+use App\Http\Controllers\Umkm\ProfilController as UmkmProfil;
+use App\Http\Controllers\Umkm\StokController as UmkmStok;
+use App\Http\Controllers\Umkm\TransaksiController as UmkmTransaksi;
 use Illuminate\Support\Facades\Route;
 
 // ---- Publik / Customer (katalog) ----
@@ -62,6 +66,25 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 // ---- UMKM ----
 Route::middleware(['auth', 'role:umkm'])->prefix('umkm')->name('umkm.')->group(function () {
     Route::get('/dashboard', [UmkmDashboard::class, 'index'])->name('dashboard');
+
+    // Profil & Rekening
+    Route::get('/profil', [UmkmProfil::class, 'edit'])->name('profil.edit');
+    Route::put('/profil', [UmkmProfil::class, 'update'])->name('profil.update');
+    Route::post('/profil/rekening', [UmkmProfil::class, 'storeRekening'])->name('profil.rekening.store');
+    Route::delete('/profil/rekening/{rekening}', [UmkmProfil::class, 'destroyRekening'])->name('profil.rekening.destroy');
+
+    // Produk + Stok (toko sendiri)
+    Route::resource('produk', UmkmProduk::class)->except('show');
+    Route::patch('produk/{produk}/toggle', [UmkmProduk::class, 'toggleStatus'])->name('produk.toggle');
+    Route::post('produk/{produk}/stok', [UmkmStok::class, 'store'])->name('produk.stok.store');
+    Route::delete('stok/{stok}', [UmkmStok::class, 'destroy'])->name('produk.stok.destroy');
+
+    // Pesanan masuk + verifikasi
+    Route::get('/transaksi', [UmkmTransaksi::class, 'index'])->name('transaksi.index');
+    Route::get('/transaksi/{transaksi}', [UmkmTransaksi::class, 'show'])->name('transaksi.show');
+    Route::post('/transaksi/{transaksi}/verifikasi', [UmkmTransaksi::class, 'verifikasi'])->name('transaksi.verifikasi');
+    Route::post('/transaksi/{transaksi}/tolak', [UmkmTransaksi::class, 'tolak'])->name('transaksi.tolak');
+    Route::post('/transaksi/{transaksi}/kirim', [UmkmTransaksi::class, 'kirim'])->name('transaksi.kirim');
 });
 
 // ---- Customer: keranjang, checkout, transaksi ----
