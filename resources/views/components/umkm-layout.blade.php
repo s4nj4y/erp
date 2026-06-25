@@ -15,6 +15,9 @@
                 ['umkm.dashboard', 'Dashboard', null],
                 ['umkm.transaksi.index', 'Pesanan Masuk', 'umkm.transaksi.*'],
                 ['umkm.produk.index', 'Produk', 'umkm.produk.*'],
+                ['umkm.saldo.index', 'Modal / Saldo', 'umkm.saldo.*'],
+                ['umkm.pengeluaran.index', 'Pengeluaran', 'umkm.pengeluaran.*'],
+                ['umkm.laporan.laba-rugi', 'Laporan', 'umkm.laporan.*'],
                 ['umkm.profil.edit', 'Profil & Rekening', 'umkm.profil.*'],
             ];
         @endphp

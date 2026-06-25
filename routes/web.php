@@ -18,7 +18,10 @@ use App\Http\Controllers\Customer\TransaksiController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Umkm\DashboardController as UmkmDashboard;
+use App\Http\Controllers\Umkm\LaporanController as UmkmLaporan;
+use App\Http\Controllers\Umkm\PengeluaranController as UmkmPengeluaran;
 use App\Http\Controllers\Umkm\ProdukController as UmkmProduk;
+use App\Http\Controllers\Umkm\SaldoController as UmkmSaldo;
 use App\Http\Controllers\Umkm\ProfilController as UmkmProfil;
 use App\Http\Controllers\Umkm\StokController as UmkmStok;
 use App\Http\Controllers\Umkm\TransaksiController as UmkmTransaksi;
@@ -85,6 +88,23 @@ Route::middleware(['auth', 'role:umkm'])->prefix('umkm')->name('umkm.')->group(f
     Route::post('/transaksi/{transaksi}/verifikasi', [UmkmTransaksi::class, 'verifikasi'])->name('transaksi.verifikasi');
     Route::post('/transaksi/{transaksi}/tolak', [UmkmTransaksi::class, 'tolak'])->name('transaksi.tolak');
     Route::post('/transaksi/{transaksi}/kirim', [UmkmTransaksi::class, 'kirim'])->name('transaksi.kirim');
+
+    // Keuangan: Saldo/Modal
+    Route::get('/saldo', [UmkmSaldo::class, 'index'])->name('saldo.index');
+    Route::post('/saldo', [UmkmSaldo::class, 'store'])->name('saldo.store');
+    Route::delete('/saldo/{saldo}', [UmkmSaldo::class, 'destroy'])->name('saldo.destroy');
+
+    // Keuangan: Pengeluaran
+    Route::get('/pengeluaran', [UmkmPengeluaran::class, 'index'])->name('pengeluaran.index');
+    Route::get('/pengeluaran/create', [UmkmPengeluaran::class, 'create'])->name('pengeluaran.create');
+    Route::post('/pengeluaran', [UmkmPengeluaran::class, 'store'])->name('pengeluaran.store');
+    Route::get('/pengeluaran/{pengeluaran}', [UmkmPengeluaran::class, 'show'])->name('pengeluaran.show');
+    Route::delete('/pengeluaran/{pengeluaran}', [UmkmPengeluaran::class, 'destroy'])->name('pengeluaran.destroy');
+
+    // Laporan (+ export pdf/excel via ?export=)
+    Route::get('/laporan/laba-rugi', [UmkmLaporan::class, 'labaRugi'])->name('laporan.laba-rugi');
+    Route::get('/laporan/pendapatan', [UmkmLaporan::class, 'pendapatan'])->name('laporan.pendapatan');
+    Route::get('/laporan/perubahan-modal', [UmkmLaporan::class, 'perubahanModal'])->name('laporan.perubahan-modal');
 });
 
 // ---- Customer: keranjang, checkout, transaksi ----
