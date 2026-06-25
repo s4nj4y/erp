@@ -14,7 +14,18 @@
                 <a href="{{ route('home') }}" class="hover:text-indigo-600">Beranda</a>
                 <a href="{{ route('shop') }}" class="hover:text-indigo-600">Shop</a>
                 @auth
-                    <a href="{{ route('dashboard') }}" class="hover:text-indigo-600">Dashboard</a>
+                    @if (auth()->user()->isCustomer())
+                        <a href="{{ route('cart.index') }}" class="hover:text-indigo-600">
+                            Keranjang ({{ auth()->user()->keranjang()->count() }})
+                        </a>
+                        <a href="{{ route('transaksi.index') }}" class="hover:text-indigo-600">Pesanan</a>
+                    @else
+                        <a href="{{ route('dashboard') }}" class="hover:text-indigo-600">Dashboard</a>
+                    @endif
+                    <form method="POST" action="{{ route('logout') }}" class="inline">
+                        @csrf
+                        <button class="hover:text-indigo-600">Keluar</button>
+                    </form>
                 @else
                     <a href="{{ route('login') }}" class="hover:text-indigo-600">Masuk</a>
                     <a href="{{ route('register') }}" class="px-3 py-1.5 bg-indigo-600 text-white rounded-md">Daftar</a>

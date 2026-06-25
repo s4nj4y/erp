@@ -11,7 +11,10 @@ use App\Http\Controllers\Admin\RekeningBankController;
 use App\Http\Controllers\Admin\StokController;
 use App\Http\Controllers\Admin\UmkmController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Customer\CartController;
+use App\Http\Controllers\Customer\CheckoutController;
 use App\Http\Controllers\Customer\HomeController;
+use App\Http\Controllers\Customer\TransaksiController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Umkm\DashboardController as UmkmDashboard;
@@ -59,6 +62,23 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 // ---- UMKM ----
 Route::middleware(['auth', 'role:umkm'])->prefix('umkm')->name('umkm.')->group(function () {
     Route::get('/dashboard', [UmkmDashboard::class, 'index'])->name('dashboard');
+});
+
+// ---- Customer: keranjang, checkout, transaksi ----
+Route::middleware(['auth', 'role:customer'])->group(function () {
+    Route::get('/keranjang', [CartController::class, 'index'])->name('cart.index');
+    Route::post('/keranjang/{produk}', [CartController::class, 'store'])->name('cart.store');
+    Route::patch('/keranjang/{keranjang}', [CartController::class, 'update'])->name('cart.update');
+    Route::delete('/keranjang/{keranjang}', [CartController::class, 'destroy'])->name('cart.destroy');
+
+    Route::get('/checkout/{umkm}', [CheckoutController::class, 'show'])->name('checkout.show');
+    Route::post('/checkout/{umkm}', [CheckoutController::class, 'store'])->name('checkout.store');
+
+    Route::get('/transaksi', [TransaksiController::class, 'index'])->name('transaksi.index');
+    Route::get('/transaksi/{transaksi}', [TransaksiController::class, 'show'])->name('transaksi.show');
+    Route::post('/transaksi/{transaksi}/bukti', [TransaksiController::class, 'uploadBukti'])->name('transaksi.bukti');
+    Route::post('/transaksi/{transaksi}/terima', [TransaksiController::class, 'terima'])->name('transaksi.terima');
+    Route::get('/transaksi/{transaksi}/invoice', [TransaksiController::class, 'invoice'])->name('transaksi.invoice');
 });
 
 // ---- Profil (semua user login) ----

@@ -13,6 +13,24 @@
             <h1 class="text-2xl font-bold">{{ $produk->nama_produk }}</h1>
             <div class="text-2xl text-indigo-600 font-semibold my-2">Rp{{ number_format($produk->harga, 0, ',', '.') }}</div>
             <div class="text-sm text-gray-500 mb-4">oleh {{ $produk->umkm?->nama_umkm }} &middot; Stok: {{ $produk->stok }}</div>
+
+            @auth
+                @if (auth()->user()->isCustomer())
+                    @if ($produk->stok > 0 && $produk->show)
+                        <form method="POST" action="{{ route('cart.store', $produk) }}" class="flex items-center gap-2 mb-4">
+                            @csrf
+                            <input type="number" name="qty" value="1" min="1" max="{{ $produk->stok }}"
+                                   class="w-20 rounded-md border-gray-300 text-sm">
+                            <button class="px-5 py-2 bg-indigo-600 text-white rounded-md text-sm">+ Keranjang</button>
+                        </form>
+                    @else
+                        <p class="text-red-500 text-sm mb-4">Stok habis.</p>
+                    @endif
+                @endif
+            @else
+                <a href="{{ route('login') }}" class="inline-block px-5 py-2 bg-indigo-600 text-white rounded-md text-sm mb-4">Masuk untuk membeli</a>
+            @endauth
+
             <p class="text-gray-700 whitespace-pre-line">{{ $produk->deskripsi }}</p>
 
             @if ($produk->detail->isNotEmpty())
