@@ -15,6 +15,8 @@
         @php
             $nav = [
                 ['admin.dashboard', 'Dashboard', null],
+                ['admin.umkm.index', 'UMKM', 'admin.umkm.*'],
+                ['admin.produk.index', 'Produk', 'admin.produk.*'],
                 ['admin.users.index', 'Users', 'admin.users.*'],
                 ['admin.bank.index', 'Bank', 'admin.bank.*'],
                 ['admin.jenis-usaha.index', 'Jenis Usaha', 'admin.jenis-usaha.*'],

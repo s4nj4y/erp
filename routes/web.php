@@ -6,6 +6,10 @@ use App\Http\Controllers\Admin\JenisPengeluaranController;
 use App\Http\Controllers\Admin\JenisUsahaController;
 use App\Http\Controllers\Admin\KategoriProdukAtributController;
 use App\Http\Controllers\Admin\KategoriProdukController;
+use App\Http\Controllers\Admin\ProdukController;
+use App\Http\Controllers\Admin\RekeningBankController;
+use App\Http\Controllers\Admin\StokController;
+use App\Http\Controllers\Admin\UmkmController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Customer\HomeController;
 use App\Http\Controllers\DashboardController;
@@ -38,6 +42,18 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
         ->name('kategori-produk.atribut.store');
     Route::delete('atribut/{atribut}', [KategoriProdukAtributController::class, 'destroy'])
         ->name('kategori-produk.atribut.destroy');
+
+    // UMKM + Rekening
+    Route::resource('umkm', UmkmController::class)->except('show');
+    Route::patch('umkm/{umkm}/toggle', [UmkmController::class, 'toggleStatus'])->name('umkm.toggle');
+    Route::post('umkm/{umkm}/rekening', [RekeningBankController::class, 'store'])->name('umkm.rekening.store');
+    Route::delete('rekening/{rekening}', [RekeningBankController::class, 'destroy'])->name('umkm.rekening.destroy');
+
+    // Produk + Stok
+    Route::resource('produk', ProdukController::class)->except('show');
+    Route::patch('produk/{produk}/toggle', [ProdukController::class, 'toggleStatus'])->name('produk.toggle');
+    Route::post('produk/{produk}/stok', [StokController::class, 'store'])->name('produk.stok.store');
+    Route::delete('stok/{stok}', [StokController::class, 'destroy'])->name('produk.stok.destroy');
 });
 
 // ---- UMKM ----

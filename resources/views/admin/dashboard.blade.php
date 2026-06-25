@@ -9,8 +9,10 @@
     </div>
 
     <div class="bg-white mt-6 p-6 rounded-lg shadow-sm">
-        <h2 class="font-semibold mb-3">Master Data</h2>
+        <h2 class="font-semibold mb-3">Manajemen</h2>
         <div class="grid grid-cols-2 md:grid-cols-3 gap-3 text-sm">
+            <a href="{{ route('admin.umkm.index') }}" class="px-4 py-3 rounded-md border border-gray-200 hover:border-indigo-400 hover:text-indigo-600">UMKM</a>
+            <a href="{{ route('admin.produk.index') }}" class="px-4 py-3 rounded-md border border-gray-200 hover:border-indigo-400 hover:text-indigo-600">Produk</a>
             <a href="{{ route('admin.users.index') }}" class="px-4 py-3 rounded-md border border-gray-200 hover:border-indigo-400 hover:text-indigo-600">Users</a>
             <a href="{{ route('admin.bank.index') }}" class="px-4 py-3 rounded-md border border-gray-200 hover:border-indigo-400 hover:text-indigo-600">Bank</a>
             <a href="{{ route('admin.jenis-usaha.index') }}" class="px-4 py-3 rounded-md border border-gray-200 hover:border-indigo-400 hover:text-indigo-600">Jenis Usaha</a>
