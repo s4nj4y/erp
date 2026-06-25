@@ -89,5 +89,13 @@ class DatabaseSeeder extends Seeder
                 'created_at' => now(), 'updated_at' => now(),
             ],
         ]);
+
+        // Rekening bank UMKM (agar checkout langsung bisa)
+        $umkm->rekening()->create([
+            'bank_id' => \App\Models\Bank::where('nama_bank', 'BRI')->first()->id,
+            'atas_nama' => 'Dapur Lampung',
+            'rekening' => '1234567890',
+            'status' => true,
+        ]);
     }
 }
