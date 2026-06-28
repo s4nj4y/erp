@@ -1,7 +1,7 @@
 <x-umkm-layout header="Detail Pengeluaran">
     <a href="{{ route('umkm.pengeluaran.index') }}" class="text-sm text-emerald-600">&larr; Pengeluaran</a>
 
-    <div class="max-w-2xl bg-white rounded-lg shadow-sm mt-4 overflow-hidden">
+    <div class="max-w-2xl bg-white rounded-xl border border-gray-200 shadow-sm mt-4 overflow-hidden">
         <div class="px-4 py-3 border-b">
             <div class="font-semibold">{{ $pengeluaran->jenis?->nama ?? 'Pengeluaran' }}</div>
             <div class="text-xs text-gray-400">{{ $pengeluaran->tanggal_pengeluaran->format('d/m/Y') }}</div>

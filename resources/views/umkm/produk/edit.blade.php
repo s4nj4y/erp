@@ -1,6 +1,6 @@
 <x-umkm-layout header="Edit Produk">
     <div class="grid lg:grid-cols-3 gap-6">
-        <div class="lg:col-span-2 bg-white p-6 rounded-lg shadow-sm">
+        <div class="lg:col-span-2 bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
             <form method="POST" action="{{ route('umkm.produk.update', $produk) }}" enctype="multipart/form-data" class="space-y-4">
                 @csrf @method('PUT')
                 @include('umkm.produk._fields', ['produk' => $produk])
@@ -11,7 +11,7 @@
             </form>
         </div>
 
-        <div class="bg-white p-6 rounded-lg shadow-sm h-fit">
+        <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm h-fit">
             <h2 class="font-semibold mb-1">Stok</h2>
             <p class="text-2xl font-bold text-emerald-600 mb-3">{{ $produk->stok }}</p>
             <form method="POST" action="{{ route('umkm.produk.stok.store', $produk) }}" class="space-y-2 mb-4">

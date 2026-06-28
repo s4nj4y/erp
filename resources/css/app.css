@@ -4,3 +4,8 @@
 
 /* Sembunyikan elemen Alpine sebelum init agar tak ada flash konten (drawer mobile). */
 [x-cloak] { display: none !important; }
+
+@layer components {
+    /* Kartu permukaan standar — dipakai panel admin & umkm. */
+    .card { @apply bg-white rounded-xl border border-gray-200 shadow-sm; }
+}

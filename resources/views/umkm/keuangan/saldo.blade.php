@@ -5,7 +5,7 @@
                 <div class="text-sm opacity-80">Modal Saat Ini</div>
                 <div class="text-2xl font-bold">Rp{{ number_format($modalSaatIni, 0, ',', '.') }}</div>
             </div>
-            <form method="POST" action="{{ route('umkm.saldo.store') }}" class="bg-white p-4 rounded-lg shadow-sm space-y-2">
+            <form method="POST" action="{{ route('umkm.saldo.store') }}" class="card p-4 space-y-2">
                 @csrf
                 <h2 class="font-semibold">Catat Modal</h2>
                 <select name="jenis_transaksi" required class="w-full rounded-md border-gray-300 text-sm">
@@ -20,7 +20,7 @@
             </form>
         </div>
 
-        <div class="md:col-span-2 bg-white rounded-lg shadow-sm overflow-hidden">
+        <div class="md:col-span-2 card overflow-hidden">
             <table class="w-full text-sm">
                 <thead class="bg-gray-50 text-left text-gray-500">
                     <tr><th class="px-4 py-3">Tanggal</th><th class="px-4 py-3">Jenis</th><th class="px-4 py-3 text-right">Jumlah</th><th class="px-4 py-3 text-right">Saldo</th><th class="px-4 py-3"></th></tr>
@@ -33,10 +33,10 @@
                                 <div>{{ ucwords(str_replace('_', ' ', $s->jenis_transaksi)) }}</div>
                                 @if ($s->keterangan)<div class="text-xs text-gray-400">{{ $s->keterangan }}</div>@endif
                             </td>
-                            <td class="px-4 py-3 text-right {{ $s->jenis_transaksi === 'pengambilan_modal' ? 'text-red-500' : 'text-green-600' }}">
+                            <td class="px-4 py-3 text-right tabular-nums whitespace-nowrap {{ $s->jenis_transaksi === 'pengambilan_modal' ? 'text-red-500' : 'text-green-600' }}">
                                 {{ $s->jenis_transaksi === 'pengambilan_modal' ? '-' : '+' }}Rp{{ number_format($s->jumlah, 0, ',', '.') }}
                             </td>
-                            <td class="px-4 py-3 text-right">Rp{{ number_format($s->saldo, 0, ',', '.') }}</td>
+                            <td class="px-4 py-3 text-right tabular-nums whitespace-nowrap">Rp{{ number_format($s->saldo, 0, ',', '.') }}</td>
                             <td class="px-4 py-3 text-right">
                                 <form action="{{ route('umkm.saldo.destroy', $s) }}" method="POST" onsubmit="return confirm('Hapus?')">@csrf @method('DELETE')<button class="text-red-600 hover:underline text-xs">Hapus</button></form>
                             </td>

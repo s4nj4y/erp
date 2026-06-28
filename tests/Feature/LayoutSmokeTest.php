@@ -39,6 +39,20 @@ class LayoutSmokeTest extends TestCase
         $this->get(route('produk.show', $produk))->assertOk()->assertSee('Kopi');
     }
 
+    public function test_umkm_panel_pages_render(): void
+    {
+        $user = User::factory()->create(['role' => 'umkm']);
+        Umkm::create(['user_id' => $user->id, 'nama_umkm' => 'Toko T']);
+        $this->actingAs($user);
+
+        foreach ([
+            'umkm.produk.index', 'umkm.transaksi.index', 'umkm.saldo.index',
+            'umkm.pengeluaran.index', 'umkm.profil.edit', 'umkm.laporan.laba-rugi',
+        ] as $route) {
+            $this->get(route($route))->assertOk();
+        }
+    }
+
     public function test_customer_transaksi_index_renders_badge(): void
     {
         $umkm = Umkm::create(['nama_umkm' => 'Toko T']);

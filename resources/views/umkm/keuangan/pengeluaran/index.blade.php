@@ -4,7 +4,7 @@
         <a href="{{ route('umkm.pengeluaran.create') }}" class="px-4 py-2 bg-emerald-600 text-white rounded-md text-sm">+ Catat Pengeluaran</a>
     </div>
 
-    <div class="bg-white rounded-lg shadow-sm overflow-hidden">
+    <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
         <table class="w-full text-sm">
             <thead class="bg-gray-50 text-left text-gray-500">
                 <tr><th class="px-4 py-3">Tanggal</th><th class="px-4 py-3">Jenis</th><th class="px-4 py-3 text-center">Item</th><th class="px-4 py-3 text-right">Total</th><th class="px-4 py-3 text-right">Aksi</th></tr>

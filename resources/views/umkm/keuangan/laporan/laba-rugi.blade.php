@@ -1,7 +1,7 @@
 <x-umkm-layout header="Laporan Laba Rugi">
     @include('umkm.keuangan.laporan._filter', ['routeName' => 'umkm.laporan.laba-rugi'])
 
-    <div class="max-w-2xl bg-white rounded-lg shadow-sm p-6">
+    <div class="max-w-2xl bg-white rounded-xl border border-gray-200 shadow-sm p-6">
         <h2 class="font-bold text-lg">{{ $title }}</h2>
         <p class="text-sm text-gray-500 mb-4">{{ $umkm->nama_umkm }} · {{ $periode }}</p>
 

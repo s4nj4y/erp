@@ -1,7 +1,7 @@
 <x-umkm-layout header="Laporan Pendapatan">
     @include('umkm.keuangan.laporan._filter', ['routeName' => 'umkm.laporan.pendapatan'])
 
-    <div class="bg-white rounded-lg shadow-sm overflow-hidden">
+    <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
         <div class="px-4 py-3 border-b">
             <h2 class="font-bold">{{ $title }}</h2>
             <p class="text-xs text-gray-500">{{ $umkm->nama_umkm }} · {{ $periode }}</p>

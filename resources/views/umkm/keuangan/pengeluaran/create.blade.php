@@ -1,5 +1,5 @@
 <x-umkm-layout header="Catat Pengeluaran">
-    <div class="max-w-3xl bg-white p-6 rounded-lg shadow-sm">
+    <div class="max-w-3xl bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
         <form method="POST" action="{{ route('umkm.pengeluaran.store') }}" class="space-y-4">
             @csrf
             <div class="grid md:grid-cols-2 gap-4">

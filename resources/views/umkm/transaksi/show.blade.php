@@ -1,9 +1,9 @@
 <x-umkm-layout header="Detail Pesanan">
-    <a href="{{ route('umkm.transaksi.index') }}" class="text-sm text-emerald-600">&larr; Pesanan Masuk</a>
+    <a href="{{ route('umkm.transaksi.index') }}" class="inline-flex items-center gap-1 text-sm text-emerald-600 hover:text-emerald-700">&larr; Pesanan Masuk</a>
 
     <div class="grid md:grid-cols-3 gap-6 mt-4">
-        <div class="md:col-span-2 bg-white rounded-lg shadow-sm overflow-hidden">
-            <div class="px-4 py-3 border-b">
+        <div class="md:col-span-2 card overflow-hidden">
+            <div class="px-4 py-3 border-b border-gray-100">
                 <div class="font-bold">{{ $transaksi->kode_transaksi }}</div>
                 <div class="text-xs text-gray-400">{{ $transaksi->tanggal->format('d/m/Y H:i') }} · {{ $transaksi->customer?->name }} ({{ $transaksi->customer?->email }})</div>
             </div>
@@ -21,14 +21,14 @@
             </table>
         </div>
 
-        <div class="bg-white rounded-lg shadow-sm p-6 h-fit space-y-4">
+        <div class="card p-6 h-fit space-y-4">
             <div>
-                <div class="text-xs text-gray-400">Status Pesanan</div>
-                <div class="font-medium">{{ ucfirst($transaksi->status) }}</div>
+                <div class="text-xs text-gray-400 mb-1">Status Pesanan</div>
+                <x-badge :status="$transaksi->status" />
             </div>
             <div>
-                <div class="text-xs text-gray-400">Status Pembayaran</div>
-                <div class="font-medium">{{ ucfirst(str_replace('_', ' ', $transaksi->status_bayar)) }}</div>
+                <div class="text-xs text-gray-400 mb-1">Status Pembayaran</div>
+                <x-badge :status="$transaksi->status_bayar" />
             </div>
 
             <div>
@@ -44,13 +44,13 @@
 
             @if ($transaksi->status_bayar === 'menunggu_verifikasi')
                 <div class="grid grid-cols-2 gap-2">
-                    <form method="POST" action="{{ route('umkm.transaksi.verifikasi', $transaksi) }}">@csrf<button class="w-full bg-emerald-600 text-white rounded-md py-2 text-sm">Verifikasi</button></form>
-                    <form method="POST" action="{{ route('umkm.transaksi.tolak', $transaksi) }}" onsubmit="return confirm('Tolak pembayaran? Stok dikembalikan.')">@csrf<button class="w-full border border-red-500 text-red-600 rounded-md py-2 text-sm">Tolak</button></form>
+                    <form method="POST" action="{{ route('umkm.transaksi.verifikasi', $transaksi) }}">@csrf<button class="w-full rounded-lg bg-emerald-600 py-2.5 text-sm font-semibold text-white hover:bg-emerald-700 transition-colors">Verifikasi</button></form>
+                    <form method="POST" action="{{ route('umkm.transaksi.tolak', $transaksi) }}" onsubmit="return confirm('Tolak pembayaran? Stok dikembalikan.')">@csrf<button class="w-full rounded-lg border border-red-300 py-2.5 text-sm font-semibold text-red-600 hover:bg-red-50 transition-colors">Tolak</button></form>
                 </div>
             @endif
 
             @if ($transaksi->status === 'diproses')
-                <form method="POST" action="{{ route('umkm.transaksi.kirim', $transaksi) }}">@csrf<button class="w-full bg-emerald-600 text-white rounded-md py-2 text-sm">Tandai Dikirim</button></form>
+                <form method="POST" action="{{ route('umkm.transaksi.kirim', $transaksi) }}">@csrf<button class="w-full rounded-lg bg-emerald-600 py-2.5 text-sm font-semibold text-white hover:bg-emerald-700 transition-colors">Tandai Dikirim</button></form>
             @endif
         </div>
     </div>

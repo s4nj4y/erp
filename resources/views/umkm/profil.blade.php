@@ -1,6 +1,6 @@
 <x-umkm-layout header="Profil & Rekening">
     <div class="grid lg:grid-cols-3 gap-6">
-        <div class="lg:col-span-2 bg-white p-6 rounded-lg shadow-sm">
+        <div class="lg:col-span-2 bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
             <h2 class="font-semibold mb-4">Profil UMKM</h2>
             <form method="POST" action="{{ route('umkm.profil.update') }}" enctype="multipart/form-data" class="space-y-4">
                 @csrf @method('PUT')
@@ -53,7 +53,7 @@
             </form>
         </div>
 
-        <div class="bg-white p-6 rounded-lg shadow-sm h-fit">
+        <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm h-fit">
             <h2 class="font-semibold mb-3">Rekening Bank</h2>
             @if (! $umkm)
                 <p class="text-sm text-gray-400">Simpan profil dulu untuk menambah rekening.</p>

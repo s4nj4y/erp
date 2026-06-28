@@ -1,5 +1,5 @@
 <x-umkm-layout header="Tambah Produk">
-    <div class="max-w-3xl bg-white p-6 rounded-lg shadow-sm">
+    <div class="max-w-3xl bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
         <form method="POST" action="{{ route('umkm.produk.store') }}" enctype="multipart/form-data" class="space-y-4">
             @csrf
             @include('umkm.produk._fields', ['produk' => null])
