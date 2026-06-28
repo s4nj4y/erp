@@ -2,12 +2,15 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\BelongsToUmkm;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Produk extends Model
 {
+    use BelongsToUmkm;
+
     protected $table = 'produk';
     protected $guarded = [];
     protected $casts = ['show' => 'boolean'];

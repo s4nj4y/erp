@@ -43,7 +43,7 @@ class CartController extends Controller
 
     public function update(Request $request, KeranjangBelanja $keranjang): RedirectResponse
     {
-        $this->authorizeOwner($request, $keranjang);
+        $this->authorize('update', $keranjang);
 
         $action = $request->input('action');
         if ($action === 'increase') {
@@ -60,14 +60,9 @@ class CartController extends Controller
 
     public function destroy(Request $request, KeranjangBelanja $keranjang): RedirectResponse
     {
-        $this->authorizeOwner($request, $keranjang);
+        $this->authorize('delete', $keranjang);
         $keranjang->delete();
 
         return back()->with('success', 'Item dihapus dari keranjang.');
-    }
-
-    private function authorizeOwner(Request $request, KeranjangBelanja $keranjang): void
-    {
-        abort_unless($keranjang->user_id === $request->user()->id, 403);
     }
 }

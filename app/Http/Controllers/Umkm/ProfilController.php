@@ -81,7 +81,7 @@ class ProfilController extends Controller
 
     public function destroyRekening(Request $request, RekeningBank $rekening): RedirectResponse
     {
-        abort_unless($rekening->umkm_id === $this->umkm($request)?->id, 403);
+        $this->authorize('delete', $rekening);
         $rekening->delete();
 
         return back()->with('success', 'Rekening dihapus.');

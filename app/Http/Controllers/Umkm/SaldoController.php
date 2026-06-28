@@ -20,7 +20,7 @@ class SaldoController extends Controller
             return redirect()->route('umkm.profil.edit')->with('success', 'Lengkapi profil UMKM dulu.');
         }
 
-        $saldo = Saldo::where('umkm_id', $umkm->id)
+        $saldo = Saldo::forUmkm($umkm)
             ->orderByDesc('tanggal_transaksi')->orderByDesc('id')
             ->paginate(15);
 
@@ -51,7 +51,7 @@ class SaldoController extends Controller
 
     public function destroy(Request $request, Saldo $saldo): RedirectResponse
     {
-        abort_unless($saldo->umkm_id === $this->umkm($request)?->id, 403);
+        $this->authorize('delete', $saldo);
         $umkmId = $saldo->umkm_id;
         $saldo->delete();
         $this->recalculate($umkmId);

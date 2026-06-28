@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Umkm;
 
 use App\Http\Controllers\Controller;
-use App\Http\Controllers\Umkm\Concerns\ResolvesUmkm;
 use App\Models\Produk;
 use App\Models\Stok;
 use Illuminate\Http\RedirectResponse;
@@ -12,11 +11,9 @@ use Illuminate\Support\Facades\DB;
 
 class StokController extends Controller
 {
-    use ResolvesUmkm;
-
     public function store(Request $request, Produk $produk): RedirectResponse
     {
-        abort_unless($produk->umkm_id === $this->umkm($request)?->id, 403);
+        $this->authorize('manageStock', $produk);
 
         $data = $request->validate([
             'status' => 'required|in:masuk,keluar',
@@ -47,7 +44,7 @@ class StokController extends Controller
 
     public function destroy(Request $request, Stok $stok): RedirectResponse
     {
-        abort_unless($stok->produk?->umkm_id === $this->umkm($request)?->id, 403);
+        $this->authorize('delete', $stok);
 
         DB::transaction(function () use ($stok) {
             $delta = $stok->jumlah_masuk - $stok->jumlah_keluar;

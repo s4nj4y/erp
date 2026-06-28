@@ -25,11 +25,11 @@ class PengeluaranController extends Controller
 
         $pengeluaran = TransaksiPengeluaran::with('jenis')
             ->withCount('detail')
-            ->where('umkm_id', $umkm->id)
+            ->forUmkm($umkm)
             ->orderByDesc('tanggal_pengeluaran')
             ->paginate(10);
 
-        $total = TransaksiPengeluaran::where('umkm_id', $umkm->id)->sum('total_harga');
+        $total = TransaksiPengeluaran::forUmkm($umkm)->sum('total_harga');
 
         return view('umkm.keuangan.pengeluaran.index', compact('pengeluaran', 'total'));
     }
@@ -84,7 +84,7 @@ class PengeluaranController extends Controller
 
     public function show(Request $request, TransaksiPengeluaran $pengeluaran): View
     {
-        abort_unless($pengeluaran->umkm_id === $this->umkm($request)?->id, 403);
+        $this->authorize('view', $pengeluaran);
         $pengeluaran->load('jenis', 'detail');
 
         return view('umkm.keuangan.pengeluaran.show', compact('pengeluaran'));
@@ -92,7 +92,7 @@ class PengeluaranController extends Controller
 
     public function destroy(Request $request, TransaksiPengeluaran $pengeluaran): RedirectResponse
     {
-        abort_unless($pengeluaran->umkm_id === $this->umkm($request)?->id, 403);
+        $this->authorize('delete', $pengeluaran);
         $pengeluaran->delete();
 
         return back()->with('success', 'Pengeluaran dihapus.');

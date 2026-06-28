@@ -24,7 +24,7 @@ class TransaksiController extends Controller
 
     public function show(Request $request, Transaksi $transaksi): View
     {
-        $this->authorizeOwner($request, $transaksi);
+        $this->authorize('viewAsCustomer', $transaksi);
         $transaksi->load('umkm.rekening.bank', 'bank', 'detail.produk');
         $total = $transaksi->detail->sum(fn ($d) => $d->harga * $d->qty);
 
@@ -33,7 +33,7 @@ class TransaksiController extends Controller
 
     public function uploadBukti(Request $request, Transaksi $transaksi): RedirectResponse
     {
-        $this->authorizeOwner($request, $transaksi);
+        $this->authorize('viewAsCustomer', $transaksi);
         $request->validate(['bukti_pembayaran' => 'required|image|max:2048']);
 
         if ($transaksi->bukti_pembayaran) {
@@ -49,7 +49,7 @@ class TransaksiController extends Controller
 
     public function terima(Request $request, Transaksi $transaksi): RedirectResponse
     {
-        $this->authorizeOwner($request, $transaksi);
+        $this->authorize('viewAsCustomer', $transaksi);
         $transaksi->update(['status' => 'selesai']);
 
         return back()->with('success', 'Pesanan ditandai diterima.');
@@ -57,15 +57,10 @@ class TransaksiController extends Controller
 
     public function invoice(Request $request, Transaksi $transaksi): View
     {
-        $this->authorizeOwner($request, $transaksi);
+        $this->authorize('viewAsCustomer', $transaksi);
         $transaksi->load('umkm', 'bank', 'detail.produk', 'customer');
         $total = $transaksi->detail->sum(fn ($d) => $d->harga * $d->qty);
 
         return view('customer.transaksi.invoice', compact('transaksi', 'total'));
-    }
-
-    private function authorizeOwner(Request $request, Transaksi $transaksi): void
-    {
-        abort_unless($transaksi->customer_id === $request->user()->id, 403);
     }
 }

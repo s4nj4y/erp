@@ -2,11 +2,14 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\BelongsToUmkm;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class RekeningBank extends Model
 {
+    use BelongsToUmkm;
+
     protected $table = 'rekening_bank';
     protected $guarded = [];
     protected $casts = ['status' => 'boolean'];

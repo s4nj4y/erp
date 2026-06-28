@@ -24,7 +24,7 @@ class ProdukController extends Controller
         }
 
         $produk = Produk::with('kategori')
-            ->where('umkm_id', $umkm->id)
+            ->forUmkm($umkm)
             ->when($request->q, fn ($q) => $q->where('nama_produk', 'like', '%'.$request->q.'%'))
             ->latest()
             ->paginate(10)
@@ -60,7 +60,7 @@ class ProdukController extends Controller
 
     public function edit(Request $request, Produk $produk): View
     {
-        $this->authorizeOwner($request, $produk);
+        $this->authorize('update', $produk);
         $produk->load('stoks');
 
         return view('umkm.produk.edit', [
@@ -71,7 +71,7 @@ class ProdukController extends Controller
 
     public function update(Request $request, Produk $produk): RedirectResponse
     {
-        $this->authorizeOwner($request, $produk);
+        $this->authorize('update', $produk);
         $data = $this->validateData($request);
         if ($request->hasFile('gambar')) {
             if ($produk->gambar) {
@@ -87,7 +87,7 @@ class ProdukController extends Controller
 
     public function destroy(Request $request, Produk $produk): RedirectResponse
     {
-        $this->authorizeOwner($request, $produk);
+        $this->authorize('delete', $produk);
         if ($produk->gambar) {
             Storage::disk('public')->delete($produk->gambar);
         }
@@ -98,15 +98,10 @@ class ProdukController extends Controller
 
     public function toggleStatus(Request $request, Produk $produk): RedirectResponse
     {
-        $this->authorizeOwner($request, $produk);
+        $this->authorize('update', $produk);
         $produk->update(['show' => ! $produk->show]);
 
         return back()->with('success', 'Status tampil diperbarui.');
-    }
-
-    private function authorizeOwner(Request $request, Produk $produk): void
-    {
-        abort_unless($produk->umkm_id === $this->umkm($request)?->id, 403);
     }
 
     private function validateData(Request $request): array

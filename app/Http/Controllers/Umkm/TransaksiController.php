@@ -24,7 +24,7 @@ class TransaksiController extends Controller
 
         $transaksi = Transaksi::with('customer')
             ->withCount('detail')
-            ->where('umkm_id', $umkm->id)
+            ->forUmkm($umkm)
             ->when($request->status, fn ($q) => $q->where('status_bayar', $request->status))
             ->latest('tanggal')
             ->paginate(10)
@@ -35,7 +35,7 @@ class TransaksiController extends Controller
 
     public function show(Request $request, Transaksi $transaksi): View
     {
-        $this->authorizeOwner($request, $transaksi);
+        $this->authorize('viewAsUmkm', $transaksi);
         $transaksi->load('customer', 'bank', 'detail.produk');
         $total = $transaksi->detail->sum(fn ($d) => $d->harga * $d->qty);
 
@@ -45,7 +45,7 @@ class TransaksiController extends Controller
     /** Verifikasi pembayaran -> pesanan diproses. */
     public function verifikasi(Request $request, Transaksi $transaksi): RedirectResponse
     {
-        $this->authorizeOwner($request, $transaksi);
+        $this->authorize('manage', $transaksi);
         $transaksi->update(['status_bayar' => 'terverifikasi', 'status' => 'diproses']);
 
         return back()->with('success', 'Pembayaran diverifikasi. Pesanan diproses.');
@@ -54,7 +54,7 @@ class TransaksiController extends Controller
     /** Tolak pembayaran -> kembalikan stok produk. */
     public function tolak(Request $request, Transaksi $transaksi): RedirectResponse
     {
-        $this->authorizeOwner($request, $transaksi);
+        $this->authorize('manage', $transaksi);
 
         DB::transaction(function () use ($transaksi) {
             $transaksi->loadMissing('detail.produk');
@@ -80,14 +80,9 @@ class TransaksiController extends Controller
     /** Tandai pesanan dikirim. */
     public function kirim(Request $request, Transaksi $transaksi): RedirectResponse
     {
-        $this->authorizeOwner($request, $transaksi);
+        $this->authorize('manage', $transaksi);
         $transaksi->update(['status' => 'dikirim']);
 
         return back()->with('success', 'Pesanan ditandai dikirim.');
-    }
-
-    private function authorizeOwner(Request $request, Transaksi $transaksi): void
-    {
-        abort_unless($transaksi->umkm_id === $this->umkm($request)?->id, 403);
     }
 }
