@@ -39,6 +39,20 @@ class LayoutSmokeTest extends TestCase
         $this->get(route('produk.show', $produk))->assertOk()->assertSee('Kopi');
     }
 
+    public function test_admin_panel_pages_render(): void
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+        $this->actingAs($admin);
+
+        foreach ([
+            'admin.dashboard', 'admin.produk.index', 'admin.umkm.index', 'admin.users.index',
+            'admin.bank.index', 'admin.jenis-usaha.index', 'admin.jenis-pengeluaran.index', 'admin.kategori-produk.index',
+            'admin.produk.create', 'admin.umkm.create', 'admin.users.create',
+        ] as $route) {
+            $this->get(route($route))->assertOk();
+        }
+    }
+
     public function test_umkm_panel_pages_render(): void
     {
         $user = User::factory()->create(['role' => 'umkm']);

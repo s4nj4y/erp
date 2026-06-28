@@ -1,54 +1,55 @@
 <x-admin-layout header="UMKM">
-    <div class="flex items-center justify-between mb-4">
+    <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
         <form method="GET" class="flex gap-2">
-            <input name="q" value="{{ request('q') }}" placeholder="Cari nama UMKM" class="rounded-md border-gray-300 text-sm">
-            <button class="px-4 py-2 bg-gray-200 rounded-md text-sm">Cari</button>
+            <label for="q" class="sr-only">Cari UMKM</label>
+            <input id="q" name="q" value="{{ request('q') }}" placeholder="Cari nama UMKM" class="rounded-lg border-gray-300 text-sm focus:border-indigo-500 focus:ring-indigo-500">
+            <button class="rounded-lg bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-200">Cari</button>
         </form>
-        <a href="{{ route('admin.umkm.create') }}" class="px-4 py-2 bg-indigo-600 text-white rounded-md text-sm">+ Tambah UMKM</a>
+        <a href="{{ route('admin.umkm.create') }}" class="inline-flex items-center gap-1.5 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 transition-colors">
+            <x-icon name="store" class="w-4 h-4" /> Tambah UMKM
+        </a>
     </div>
 
-    <div class="bg-white rounded-lg shadow-sm overflow-hidden">
-        <table class="w-full text-sm">
-            <thead class="bg-gray-50 text-left text-gray-500">
-                <tr>
-                    <th class="px-4 py-3">Nama UMKM</th>
-                    <th class="px-4 py-3">Jenis Usaha</th>
-                    <th class="px-4 py-3 text-center">Produk</th>
-                    <th class="px-4 py-3">Status</th>
-                    <th class="px-4 py-3 w-40 text-right">Aksi</th>
-                </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-100">
-                @forelse ($umkm as $u)
+    <div class="card overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+                <thead class="bg-gray-50 text-left text-gray-500">
                     <tr>
-                        <td class="px-4 py-3">
-                            <div class="font-medium">{{ $u->nama_umkm }}</div>
-                            <div class="text-xs text-gray-400">{{ $u->alamat }}</div>
-                        </td>
-                        <td class="px-4 py-3 text-gray-500">{{ $u->jenisUsaha?->nama_usaha ?? '-' }}</td>
-                        <td class="px-4 py-3 text-center">{{ $u->produk_count }}</td>
-                        <td class="px-4 py-3">
-                            <form action="{{ route('admin.umkm.toggle', $u) }}" method="POST">
-                                @csrf @method('PATCH')
-                                <button class="{{ $u->status ? 'text-green-600' : 'text-red-500' }} hover:underline">
-                                    {{ $u->status ? 'Aktif' : 'Nonaktif' }}
-                                </button>
-                            </form>
-                        </td>
-                        <td class="px-4 py-3 text-right whitespace-nowrap">
-                            <a href="{{ route('admin.umkm.edit', $u) }}" class="text-indigo-600 hover:underline">Edit</a>
-                            <form action="{{ route('admin.umkm.destroy', $u) }}" method="POST" class="inline"
-                                  onsubmit="return confirm('Hapus UMKM ini? Semua produk terkait ikut terhapus.')">
-                                @csrf @method('DELETE')
-                                <button class="text-red-600 hover:underline ml-2">Hapus</button>
-                            </form>
-                        </td>
+                        <th class="px-4 py-3 font-medium">Nama UMKM</th><th class="px-4 py-3 font-medium">Jenis Usaha</th>
+                        <th class="px-4 py-3 font-medium text-center">Produk</th><th class="px-4 py-3 font-medium">Status</th>
+                        <th class="px-4 py-3 font-medium w-40 text-right">Aksi</th>
                     </tr>
-                @empty
-                    <tr><td colspan="5" class="px-4 py-6 text-center text-gray-400">Belum ada UMKM.</td></tr>
-                @endforelse
-            </tbody>
-        </table>
+                </thead>
+                <tbody class="divide-y divide-gray-100">
+                    @forelse ($umkm as $u)
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-4 py-3">
+                                <div class="font-medium text-gray-900">{{ $u->nama_umkm }}</div>
+                                <div class="text-xs text-gray-400">{{ $u->alamat ?: '—' }}</div>
+                            </td>
+                            <td class="px-4 py-3 text-gray-500">{{ $u->jenisUsaha?->nama_usaha ?? '—' }}</td>
+                            <td class="px-4 py-3 text-center tabular-nums">{{ $u->produk_count }}</td>
+                            <td class="px-4 py-3">
+                                <form action="{{ route('admin.umkm.toggle', $u) }}" method="POST">@csrf @method('PATCH')
+                                    <button class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ring-1 ring-inset {{ $u->status ? 'bg-green-50 text-green-700 ring-green-200' : 'bg-red-50 text-red-700 ring-red-200' }}">
+                                        {{ $u->status ? 'Aktif' : 'Nonaktif' }}
+                                    </button>
+                                </form>
+                            </td>
+                            <td class="px-4 py-3 text-right whitespace-nowrap">
+                                <a href="{{ route('admin.umkm.edit', $u) }}" class="font-medium text-indigo-600 hover:text-indigo-700">Edit</a>
+                                <form action="{{ route('admin.umkm.destroy', $u) }}" method="POST" class="inline" onsubmit="return confirm('Hapus UMKM ini? Semua produk terkait ikut terhapus.')">@csrf @method('DELETE')<button class="ml-3 font-medium text-red-600 hover:text-red-700">Hapus</button></form>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr><td colspan="5" class="px-4 py-12 text-center text-gray-400">
+                            <x-icon name="store" class="w-9 h-9 mx-auto text-gray-300" />
+                            <p class="mt-2">Belum ada UMKM.</p>
+                        </td></tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
         <div class="p-4">{{ $umkm->links() }}</div>
     </div>
 </x-admin-layout>

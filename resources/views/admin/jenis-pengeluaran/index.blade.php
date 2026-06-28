@@ -1,16 +1,16 @@
 <x-admin-layout header="Master · Jenis Pengeluaran">
     <div class="grid md:grid-cols-3 gap-6">
         <div class="md:col-span-1">
-            <form method="POST" action="{{ route('admin.jenis-pengeluaran.store') }}" class="bg-white p-4 rounded-lg shadow-sm">
+            <form method="POST" action="{{ route('admin.jenis-pengeluaran.store') }}" class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
                 @csrf
                 <h2 class="font-semibold mb-3">Tambah Jenis Pengeluaran</h2>
                 <input name="nama" value="{{ old('nama') }}" placeholder="Nama jenis pengeluaran" required
                        class="w-full rounded-md border-gray-300 text-sm mb-3">
-                <button class="w-full bg-indigo-600 text-white rounded-md py-2 text-sm">Simpan</button>
+                <button class="w-full bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition-colors py-2 text-sm">Simpan</button>
             </form>
         </div>
 
-        <div class="md:col-span-2 bg-white rounded-lg shadow-sm overflow-hidden">
+        <div class="md:col-span-2 bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
             <table class="w-full text-sm">
                 <thead class="bg-gray-50 text-left text-gray-500">
                     <tr><th class="px-4 py-3">Nama</th><th class="px-4 py-3 w-32 text-right">Aksi</th></tr>

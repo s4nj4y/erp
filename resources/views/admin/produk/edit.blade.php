@@ -1,18 +1,18 @@
 <x-admin-layout header="Edit Produk">
     <div class="grid lg:grid-cols-3 gap-6">
-        <div class="lg:col-span-2 bg-white p-6 rounded-lg shadow-sm">
+        <div class="lg:col-span-2 bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
             <form method="POST" action="{{ route('admin.produk.update', $produk) }}" enctype="multipart/form-data" class="space-y-4">
                 @csrf @method('PUT')
                 @include('admin.produk._fields', ['produk' => $produk])
                 <div class="flex gap-2 pt-2">
-                    <button class="bg-indigo-600 text-white rounded-md px-4 py-2 text-sm">Perbarui</button>
+                    <button class="bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition-colors px-4 py-2 text-sm">Perbarui</button>
                     <a href="{{ route('admin.produk.index') }}" class="px-4 py-2 text-sm text-gray-600">Kembali</a>
                 </div>
             </form>
         </div>
 
         {{-- Manajemen stok --}}
-        <div class="bg-white p-6 rounded-lg shadow-sm h-fit">
+        <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm h-fit">
             <h2 class="font-semibold mb-1">Stok</h2>
             <p class="text-2xl font-bold text-indigo-600 mb-3">{{ $produk->stok }}</p>
 
@@ -25,7 +25,7 @@
                 <input type="number" name="jumlah" min="1" placeholder="Jumlah" required class="w-full rounded-md border-gray-300 text-sm">
                 <input type="date" name="tanggal" value="{{ date('Y-m-d') }}" required class="w-full rounded-md border-gray-300 text-sm">
                 <input name="keterangan" placeholder="Keterangan (opsional)" class="w-full rounded-md border-gray-300 text-sm">
-                <button class="w-full bg-indigo-600 text-white rounded-md py-2 text-sm">Catat</button>
+                <button class="w-full bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition-colors py-2 text-sm">Catat</button>
             </form>
 
             <h3 class="text-sm font-medium mb-2">Riwayat</h3>
