@@ -32,6 +32,15 @@ class LayoutSmokeTest extends TestCase
         $this->get(route('shop'))->assertOk();
     }
 
+    public function test_auth_and_profile_pages_render(): void
+    {
+        $this->get(route('login'))->assertOk();
+        $this->get(route('register'))->assertOk();
+
+        $user = User::factory()->create(['role' => 'customer']);
+        $this->actingAs($user)->get(route('profile.edit'))->assertOk()->assertSee('Profil Akun');
+    }
+
     public function test_produk_detail_renders(): void
     {
         $umkm = Umkm::create(['nama_umkm' => 'Toko T']);
