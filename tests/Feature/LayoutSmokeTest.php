@@ -2,6 +2,8 @@
 
 namespace Tests\Feature;
 
+use App\Models\Produk;
+use App\Models\Transaksi;
 use App\Models\Umkm;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -28,5 +30,23 @@ class LayoutSmokeTest extends TestCase
     public function test_public_shell_renders(): void
     {
         $this->get(route('shop'))->assertOk();
+    }
+
+    public function test_produk_detail_renders(): void
+    {
+        $umkm = Umkm::create(['nama_umkm' => 'Toko T']);
+        $produk = Produk::create(['umkm_id' => $umkm->id, 'nama_produk' => 'Kopi', 'harga_modal' => 1, 'harga' => 25000, 'stok' => 5]);
+        $this->get(route('produk.show', $produk))->assertOk()->assertSee('Kopi');
+    }
+
+    public function test_customer_transaksi_index_renders_badge(): void
+    {
+        $umkm = Umkm::create(['nama_umkm' => 'Toko T']);
+        $customer = User::factory()->create(['role' => 'customer']);
+        Transaksi::create([
+            'customer_id' => $customer->id, 'umkm_id' => $umkm->id,
+            'kode_transaksi' => 'TRX-1', 'tanggal' => now(), 'status' => 'diproses', 'status_bayar' => 'menunggu_verifikasi',
+        ]);
+        $this->actingAs($customer)->get(route('transaksi.index'))->assertOk()->assertSee('Diproses');
     }
 }

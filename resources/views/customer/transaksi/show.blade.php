@@ -26,12 +26,12 @@
 
         <div class="bg-white rounded-lg shadow-sm p-6 h-fit space-y-4">
             <div>
-                <div class="text-xs text-gray-400">Status Pesanan</div>
-                <div class="font-medium">{{ ucfirst($transaksi->status) }}</div>
+                <div class="text-xs text-gray-400 mb-1">Status Pesanan</div>
+                <x-badge :status="$transaksi->status" />
             </div>
             <div>
-                <div class="text-xs text-gray-400">Status Pembayaran</div>
-                <div class="font-medium">{{ ucfirst(str_replace('_', ' ', $transaksi->status_bayar)) }}</div>
+                <div class="text-xs text-gray-400 mb-1">Status Pembayaran</div>
+                <x-badge :status="$transaksi->status_bayar" />
             </div>
 
             @php $rek = $transaksi->umkm?->rekening->firstWhere('bank_id', $transaksi->bank_id); @endphp
