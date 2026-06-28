@@ -1,13 +1,6 @@
 <x-public-layout>
     <a href="{{ route('transaksi.index') }}" class="text-sm text-indigo-600">&larr; Pesanan Saya</a>
 
-    @if (session('success'))
-        <div class="my-4 rounded-md bg-green-50 border border-green-200 text-green-800 px-4 py-3 text-sm">{{ session('success') }}</div>
-    @endif
-    @if ($errors->any())
-        <div class="my-4 rounded-md bg-red-50 border border-red-200 text-red-800 px-4 py-3 text-sm">{{ $errors->first() }}</div>
-    @endif
-
     <div class="grid md:grid-cols-3 gap-6 mt-4">
         <div class="md:col-span-2 bg-white rounded-lg shadow-sm overflow-hidden">
             <div class="px-4 py-3 border-b flex items-center justify-between">

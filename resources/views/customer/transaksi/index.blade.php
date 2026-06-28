@@ -1,10 +1,6 @@
 <x-public-layout>
     <h1 class="text-2xl font-bold mb-6">Pesanan Saya</h1>
 
-    @if (session('success'))
-        <div class="mb-4 rounded-md bg-green-50 border border-green-200 text-green-800 px-4 py-3 text-sm">{{ session('success') }}</div>
-    @endif
-
     <div class="bg-white rounded-lg shadow-sm overflow-hidden">
         <table class="w-full text-sm">
             <thead class="bg-gray-50 text-left text-gray-500">

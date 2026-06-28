@@ -1,10 +1,6 @@
 <x-public-layout>
     <h1 class="text-2xl font-bold mb-6">Keranjang Belanja</h1>
 
-    @if (session('success'))
-        <div class="mb-4 rounded-md bg-green-50 border border-green-200 text-green-800 px-4 py-3 text-sm">{{ session('success') }}</div>
-    @endif
-
     @if ($items->isEmpty())
         <div class="bg-white p-8 rounded-lg text-center text-gray-500">
             Keranjang kosong. <a href="{{ route('shop') }}" class="text-indigo-600">Mulai belanja</a>.

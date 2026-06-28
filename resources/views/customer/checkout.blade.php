@@ -1,10 +1,6 @@
 <x-public-layout>
     <h1 class="text-2xl font-bold mb-6">Checkout — {{ $umkm->nama_umkm }}</h1>
 
-    @if (session('success'))
-        <div class="mb-4 rounded-md bg-yellow-50 border border-yellow-200 text-yellow-800 px-4 py-3 text-sm">{{ session('success') }}</div>
-    @endif
-
     <div class="grid md:grid-cols-3 gap-6">
         <div class="md:col-span-2 bg-white rounded-lg shadow-sm overflow-hidden">
             <table class="w-full text-sm">
