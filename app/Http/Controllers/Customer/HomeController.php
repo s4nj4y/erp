@@ -5,28 +5,30 @@ namespace App\Http\Controllers\Customer;
 use App\Http\Controllers\Controller;
 use App\Models\KategoriProduk;
 use App\Models\Produk;
+use App\Models\Umkm;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class HomeController extends Controller
 {
-    /** Katalog ringkas di halaman depan. */
+    /** Daftar UMKM di halaman depan. */
     public function index(): View
     {
-        $produk = Produk::with('umkm', 'kategori')
-            ->where('show', true)
-            ->where('stok', '>', 0)
+        $umkm = Umkm::with('jenisUsaha')
+            ->withCount(['produk' => fn ($q) => $q->where('show', true)->where('stok', '>', 0)])
+            ->where('status', true)
             ->latest()
-            ->paginate(16);
+            ->paginate(12);
 
-        return view('home', compact('produk'));
+        return view('home', compact('umkm'));
     }
 
-    /** Halaman shop dengan filter kategori. */
+    /** Halaman shop dengan filter kategori / toko. */
     public function shop(Request $request): View
     {
         $produk = Produk::with('umkm', 'kategori')
             ->where('show', true)
+            ->when($request->umkm, fn ($q) => $q->where('umkm_id', $request->umkm))
             ->when($request->kategori, fn ($q) => $q->where('kategori_produk_id', $request->kategori))
             ->when($request->q, fn ($q) => $q->where('nama_produk', 'like', '%'.$request->q.'%'))
             ->latest()

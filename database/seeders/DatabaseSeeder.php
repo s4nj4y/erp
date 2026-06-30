@@ -97,5 +97,8 @@ class DatabaseSeeder extends Seeder
             'rekening' => '1234567890',
             'status' => true,
         ]);
+
+        // UMKM contoh tambahan agar grid beranda terisi penuh.
+        $this->call(UmkmSeeder::class);
     }
 }
