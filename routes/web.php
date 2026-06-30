@@ -30,6 +30,7 @@ use Illuminate\Support\Facades\Route;
 // ---- Publik / Customer (katalog) ----
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/shop', [HomeController::class, 'shop'])->name('shop');
+Route::get('/toko/{umkm}', [HomeController::class, 'toko'])->name('toko.show');
 Route::get('/produk/{produk}', [HomeController::class, 'show'])->name('produk.show');
 
 // ---- Redirect dashboard sesuai role ----

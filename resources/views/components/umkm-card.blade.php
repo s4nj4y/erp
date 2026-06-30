@@ -1,6 +1,6 @@
 @props(['umkm'])
 
-<a href="{{ route('shop', ['umkm' => $umkm->id]) }}"
+<a href="{{ route('toko.show', $umkm) }}"
    class="group flex flex-col bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-lg hover:border-gray-300 transition-all">
     {{-- Banner toko --}}
     <div class="aspect-[16/9] overflow-hidden flex items-center justify-center

@@ -40,6 +40,22 @@ class HomeController extends Controller
         return view('shop', compact('produk', 'kategori'));
     }
 
+    /** Detail toko UMKM beserta produknya. Hanya toko aktif yang tampil publik. */
+    public function toko(Umkm $umkm): View
+    {
+        abort_unless($umkm->status, 404);
+
+        $umkm->load('jenisUsaha');
+
+        $produk = $umkm->produk()
+            ->with('kategori')
+            ->where('show', true)
+            ->latest()
+            ->paginate(12);
+
+        return view('toko-detail', compact('umkm', 'produk'));
+    }
+
     /** Detail produk — guard 404 bila tidak ada (pelajaran dari bug app lama). */
     public function show(Produk $produk): View
     {
