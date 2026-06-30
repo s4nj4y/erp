@@ -11,14 +11,20 @@ use Illuminate\View\View;
 
 class HomeController extends Controller
 {
-    /** Daftar UMKM di halaman depan. */
-    public function index(): View
+    /** Daftar UMKM di halaman depan, dengan pencarian toko. */
+    public function index(Request $request): View
     {
         $umkm = Umkm::with('jenisUsaha')
             ->withCount(['produk' => fn ($q) => $q->where('show', true)->where('stok', '>', 0)])
             ->where('status', true)
+            ->when($request->q, fn ($query) => $query->where(fn ($w) => $w
+                ->where('nama_umkm', 'like', '%'.$request->q.'%')
+                ->orWhere('deskripsi', 'like', '%'.$request->q.'%')
+                ->orWhereHas('jenisUsaha', fn ($j) => $j->where('nama_usaha', 'like', '%'.$request->q.'%'))
+            ))
             ->latest()
-            ->paginate(12);
+            ->paginate(12)
+            ->withQueryString();
 
         return view('home', compact('umkm'));
     }
