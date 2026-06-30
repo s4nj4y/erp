@@ -6,7 +6,8 @@
     <div class="aspect-[16/9] overflow-hidden flex items-center justify-center
                 bg-gradient-to-br from-indigo-500 to-violet-600 text-white/70">
         @if ($umkm->foto)
-            <img src="{{ asset('storage/'.$umkm->foto) }}" alt="Foto toko {{ $umkm->nama_umkm }}" loading="lazy"
+            <img src="{{ \Illuminate\Support\Str::startsWith($umkm->foto, ['http://', 'https://']) ? $umkm->foto : asset('storage/'.$umkm->foto) }}"
+                 alt="Foto toko {{ $umkm->nama_umkm }}" loading="lazy"
                  class="object-cover w-full h-full motion-safe:group-hover:scale-105 transition-transform duration-300">
         @else
             <x-icon name="store" class="w-12 h-12" />

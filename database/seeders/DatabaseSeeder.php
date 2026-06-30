@@ -69,6 +69,7 @@ class DatabaseSeeder extends Seeder
             'no_wa' => '081234567890',
             'alamat' => 'Bandar Lampung',
             'deskripsi' => 'UMKM kuliner khas Lampung',
+            'foto' => 'https://picsum.photos/seed/dapur-lampung/800/450',
             'tgl_pendirian' => '2023-01-01',
             'nama_pendiri' => 'Pemilik UMKM',
             'jenis_usaha_id' => $kuliner->id,

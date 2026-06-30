@@ -14,31 +14,33 @@ class UmkmSeeder extends Seeder
     {
         $kategori = KategoriProduk::firstOrCreate(['nama' => 'Makanan'])->id;
 
+        // Foto pakai URL gambar eksternal (picsum, stabil per-seed) untuk demo;
+        // upload asli tetap berupa path relatif di storage.
         $stores = [
             ['Batik Tapis Sari', 'Kerajinan', 'Sukarame, Bandar Lampung',
-                'Kerajinan kain tapis dan batik khas Lampung dengan motif tradisional yang dikerjakan tangan oleh pengrajin lokal.', 3],
+                'Kerajinan kain tapis dan batik khas Lampung dengan motif tradisional yang dikerjakan tangan oleh pengrajin lokal.', 3, 'batik-tapis'],
             ['Kopi Ulubelu', 'Kuliner', 'Tanggamus',
-                'Biji kopi robusta dataran tinggi Ulubelu, dipanggang segar setiap minggu.', 2],
+                'Biji kopi robusta dataran tinggi Ulubelu, dipanggang segar setiap minggu.', 2, 'kopi-ulubelu'],
             ['Sambal Lampung Bu Tin', 'Kuliner', 'Kedaton, Bandar Lampung',
-                'Aneka sambal botolan tahan lama: sambal terasi, sambal teri, dan sambal cumi.', 4],
+                'Aneka sambal botolan tahan lama: sambal terasi, sambal teri, dan sambal cumi.', 4, 'sambal-lampung'],
             ['Anyaman Rotan Jaya', 'Kerajinan', 'Metro',
-                'Furnitur dan dekorasi rumah berbahan rotan alami ramah lingkungan.', 2],
+                'Furnitur dan dekorasi rumah berbahan rotan alami ramah lingkungan.', 2, 'rotan-jaya'],
             ['Madu Hutan Way Kambas', 'Pertanian', 'Lampung Timur',
-                'Madu hutan murni hasil panen lebah liar di sekitar Taman Nasional Way Kambas.', 1],
+                'Madu hutan murni hasil panen lebah liar di sekitar Taman Nasional Way Kambas.', 1, 'madu-kambas'],
             ['Keripik Singkong Renyah', 'Kuliner', 'Pringsewu',
-                'Camilan keripik singkong aneka rasa: original, balado, dan keju.', 3],
+                'Camilan keripik singkong aneka rasa: original, balado, dan keju.', 3, 'keripik-singkong'],
         ];
 
-        foreach ($stores as [$nama, $jenis, $alamat, $deskripsi, $jumlahProduk]) {
+        foreach ($stores as [$nama, $jenis, $alamat, $deskripsi, $jumlahProduk, $fotoSeed]) {
             $jenisId = JenisUsaha::firstOrCreate(['nama_usaha' => $jenis])->id;
 
-            $umkm = Umkm::firstOrCreate(
+            $umkm = Umkm::updateOrCreate(
                 ['nama_umkm' => $nama],
                 [
                     'alamat' => $alamat,
                     'deskripsi' => $deskripsi,
+                    'foto' => "https://picsum.photos/seed/{$fotoSeed}/800/450",
                     'jenis_usaha_id' => $jenisId,
-                    'no_wa' => '0812'.random_int(10000000, 99999999),
                     'status' => true,
                 ]
             );
