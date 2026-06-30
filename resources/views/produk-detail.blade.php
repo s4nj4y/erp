@@ -3,8 +3,8 @@
 
     <div class="grid md:grid-cols-2 gap-8 mt-4 bg-white p-6 rounded-2xl border border-gray-200">
         <div class="aspect-square bg-gray-100 flex items-center justify-center text-gray-300 rounded-xl overflow-hidden">
-            @if ($produk->gambar)
-                <img src="{{ asset('storage/'.$produk->gambar) }}" alt="{{ $produk->nama_produk }}" class="object-cover w-full h-full">
+            @if ($produk->gambar_url)
+                <img src="{{ $produk->gambar_url }}" alt="{{ $produk->nama_produk }}" class="object-cover w-full h-full">
             @else
                 <x-icon name="cube" class="w-16 h-16" />
             @endif

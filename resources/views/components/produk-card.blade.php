@@ -3,8 +3,8 @@
 <a href="{{ route('produk.show', $produk) }}"
    class="group flex flex-col bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-lg hover:border-gray-300 transition-all">
     <div class="aspect-square bg-gray-100 overflow-hidden flex items-center justify-center text-gray-300">
-        @if ($produk->gambar)
-            <img src="{{ asset('storage/'.$produk->gambar) }}" alt="{{ $produk->nama_produk }}" loading="lazy"
+        @if ($produk->gambar_url)
+            <img src="{{ $produk->gambar_url }}" alt="{{ $produk->nama_produk }}" loading="lazy"
                  class="object-cover w-full h-full motion-safe:group-hover:scale-105 transition-transform duration-300">
         @else
             <x-icon name="cube" class="w-10 h-10" />

@@ -81,12 +81,14 @@ class DatabaseSeeder extends Seeder
                 'umkm_id' => $umkm->id, 'kategori_produk_id' => $makanan->id,
                 'nama_produk' => 'Keripik Pisang', 'stok' => 50, 'harga_modal' => 8000, 'harga' => 15000,
                 'deskripsi' => 'Keripik pisang renyah khas Lampung.', 'show' => true,
+                'gambar' => 'https://picsum.photos/seed/keripik-pisang/600/600',
                 'created_at' => now(), 'updated_at' => now(),
             ],
             [
                 'umkm_id' => $umkm->id, 'kategori_produk_id' => $makanan->id,
                 'nama_produk' => 'Kopi Robusta Lampung', 'stok' => 30, 'harga_modal' => 25000, 'harga' => 45000,
                 'deskripsi' => 'Kopi robusta asli Lampung 200gr.', 'show' => true,
+                'gambar' => 'https://picsum.photos/seed/kopi-robusta-lampung/600/600',
                 'created_at' => now(), 'updated_at' => now(),
             ],
         ]);
@@ -99,7 +101,10 @@ class DatabaseSeeder extends Seeder
             'status' => true,
         ]);
 
-        // UMKM contoh tambahan agar grid beranda terisi penuh.
-        $this->call(UmkmSeeder::class);
+        // UMKM contoh tambahan + produk yang dijual tiap toko.
+        $this->call([
+            UmkmSeeder::class,
+            ProdukSeeder::class,
+        ]);
     }
 }
