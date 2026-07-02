@@ -68,12 +68,13 @@ class PublikTest extends TestCase
     public function test_detail_produk_menyertakan_toko_dan_gambar_url(): void
     {
         $toko = $this->buatToko();
-        $p = Produk::create(['umkm_id' => $toko->id, 'nama_produk' => 'Keripik', 'harga' => 10000, 'stok' => 5, 'show' => true, 'gambar' => 'https://contoh.test/k.jpg']);
+        $p = Produk::create(['umkm_id' => $toko->id, 'nama_produk' => 'Keripik', 'harga' => 10000, 'harga_modal' => 7000, 'stok' => 5, 'show' => true, 'gambar' => 'https://contoh.test/k.jpg']);
 
         $res = $this->getJson("/api/produk/{$p->id}");
 
         $res->assertOk()
             ->assertJsonPath('data.umkm.nama_umkm', 'Toko Maju')
             ->assertJsonPath('data.gambar_url', 'https://contoh.test/k.jpg');
+        $this->assertArrayNotHasKey('harga_modal', $res->json('data'));
     }
 }

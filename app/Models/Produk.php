@@ -14,6 +14,7 @@ class Produk extends Model
 
     protected $table = 'produk';
     protected $guarded = [];
+    protected $hidden = ['harga_modal'];
     protected $casts = ['show' => 'boolean'];
 
     /** URL gambar: dukung path upload di storage maupun URL absolut (mis. seeder demo). */
