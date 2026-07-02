@@ -1,11 +1,18 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\ProdukController;
 use App\Http\Controllers\Api\ProfileController;
+use App\Http\Controllers\Api\TokoController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
+
+Route::get('/toko', [TokoController::class, 'index']);
+Route::get('/toko/{umkm}', [TokoController::class, 'show']);
+Route::get('/produk', [ProdukController::class, 'index']);
+Route::get('/produk/{produk}', [ProdukController::class, 'show']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);

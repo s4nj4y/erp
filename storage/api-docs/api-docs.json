@@ -121,6 +121,73 @@
                 ]
             }
         },
+        "/api/produk": {
+            "get": {
+                "tags": [
+                    "Publik"
+                ],
+                "summary": "Daftar produk tampil (show=true)",
+                "operationId": "3c74aa47134424450a7cf8e1942a2172",
+                "parameters": [
+                    {
+                        "name": "q",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "umkm",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "kategori",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Paginasi produk"
+                    }
+                }
+            }
+        },
+        "/api/produk/{produk}": {
+            "get": {
+                "tags": [
+                    "Publik"
+                ],
+                "summary": "Detail produk + toko + atribut",
+                "operationId": "a28ad28f3ba3a9a81c73d547772c961f",
+                "parameters": [
+                    {
+                        "name": "produk",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Detail produk"
+                    },
+                    "404": {
+                        "description": "Tidak ada"
+                    }
+                }
+            }
+        },
         "/api/profile": {
             "get": {
                 "tags": [
@@ -179,6 +246,57 @@
                     }
                 ]
             }
+        },
+        "/api/toko": {
+            "get": {
+                "tags": [
+                    "Publik"
+                ],
+                "summary": "Daftar toko UMKM aktif",
+                "operationId": "8a61d18e248986dc80cba6c9a4819ab1",
+                "parameters": [
+                    {
+                        "name": "q",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Paginasi toko"
+                    }
+                }
+            }
+        },
+        "/api/toko/{umkm}": {
+            "get": {
+                "tags": [
+                    "Publik"
+                ],
+                "summary": "Detail toko + info jenis usaha",
+                "operationId": "a7f2044bcbc7e1a196489040597bab1b",
+                "parameters": [
+                    {
+                        "name": "umkm",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Detail toko"
+                    },
+                    "404": {
+                        "description": "Tidak ada / nonaktif"
+                    }
+                }
+            }
         }
     },
     "components": {
@@ -193,6 +311,10 @@
         {
             "name": "Auth",
             "description": "Auth"
+        },
+        {
+            "name": "Publik",
+            "description": "Publik"
         },
         {
             "name": "Profil",
