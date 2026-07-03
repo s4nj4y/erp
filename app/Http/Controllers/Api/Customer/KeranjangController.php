@@ -44,7 +44,10 @@ class KeranjangController extends ApiController
         $item->qty = min($produk->stok, ($item->qty ?? 0) + $qty);
         $item->save();
 
-        return $this->respond($item->load('produk.umkm'), 'Produk ditambahkan ke keranjang.', 201);
+        $item->load('produk.umkm');
+        $item->produk?->append('gambar_url');
+
+        return $this->respond($item, 'Produk ditambahkan ke keranjang.', 201);
     }
 
     #[OA\Patch(path: '/api/keranjang/{keranjang}', tags: ['Keranjang'], summary: 'Ubah qty (action increase/decrease atau qty langsung)', security: [['bearerAuth' => []]],
@@ -68,7 +71,10 @@ class KeranjangController extends ApiController
         }
         $keranjang->save();
 
-        return $this->respond($keranjang->load('produk.umkm'));
+        $keranjang->load('produk.umkm');
+        $keranjang->produk?->append('gambar_url');
+
+        return $this->respond($keranjang);
     }
 
     #[OA\Delete(path: '/api/keranjang/{keranjang}', tags: ['Keranjang'], summary: 'Hapus item', security: [['bearerAuth' => []]],

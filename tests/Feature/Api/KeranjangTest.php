@@ -24,7 +24,7 @@ class KeranjangTest extends TestCase
         $pemilik = User::factory()->create(['role' => 'umkm']);
         $jenis = JenisUsaha::create(['nama_usaha' => 'Kuliner']);
         $umkm = Umkm::create(['user_id' => $pemilik->id, 'jenis_usaha_id' => $jenis->id, 'nama_umkm' => 'Toko Maju', 'status' => true]);
-        $this->produk = Produk::create(['umkm_id' => $umkm->id, 'nama_produk' => 'Keripik', 'harga' => 10000, 'stok' => 5, 'show' => true]);
+        $this->produk = Produk::create(['umkm_id' => $umkm->id, 'nama_produk' => 'Keripik', 'harga' => 10000, 'stok' => 5, 'show' => true, 'gambar' => 'https://contoh.test/k.jpg']);
     }
 
     public function test_butuh_login_dan_role_customer(): void
@@ -37,9 +37,10 @@ class KeranjangTest extends TestCase
 
     public function test_tambah_item_dan_lihat_keranjang(): void
     {
-        $this->actingAs($this->customer, 'sanctum')
+        $postRes = $this->actingAs($this->customer, 'sanctum')
             ->postJson("/api/keranjang/{$this->produk->id}", ['qty' => 2])
             ->assertCreated();
+        $postRes->assertJsonPath('data.produk.gambar_url', 'https://contoh.test/k.jpg');
 
         $res = $this->actingAs($this->customer, 'sanctum')->getJson('/api/keranjang');
         $res->assertOk()
