@@ -350,6 +350,137 @@
                 ]
             }
         },
+        "/api/transaksi": {
+            "get": {
+                "tags": [
+                    "Transaksi Customer"
+                ],
+                "summary": "Riwayat pesanan user",
+                "operationId": "1e912616b41efe820c2a6e05d0b2b173",
+                "responses": {
+                    "200": {
+                        "description": "Paginasi transaksi"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/transaksi/{transaksi}": {
+            "get": {
+                "tags": [
+                    "Transaksi Customer"
+                ],
+                "summary": "Detail pesanan + total",
+                "operationId": "771bc3d5b3dbbe951e7493cbc2dc98b9",
+                "parameters": [
+                    {
+                        "name": "transaksi",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Detail + total"
+                    },
+                    "404": {
+                        "description": "Bukan milik user"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/transaksi/{transaksi}/bukti": {
+            "post": {
+                "tags": [
+                    "Transaksi Customer"
+                ],
+                "summary": "Upload bukti pembayaran (multipart)",
+                "operationId": "e5a062d483325dd2fd4626d7cdedcba0",
+                "parameters": [
+                    {
+                        "name": "transaksi",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "bukti_pembayaran"
+                                ],
+                                "properties": {
+                                    "bukti_pembayaran": {
+                                        "type": "string",
+                                        "format": "binary"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Bukti tersimpan, status_bayar menunggu_verifikasi"
+                    },
+                    "422": {
+                        "description": "Bukan gambar / terlalu besar"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/transaksi/{transaksi}/terima": {
+            "post": {
+                "tags": [
+                    "Transaksi Customer"
+                ],
+                "summary": "Tandai pesanan diterima",
+                "operationId": "9e9e573cae89e06dd2c8c5f7482d0863",
+                "parameters": [
+                    {
+                        "name": "transaksi",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Status selesai"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/produk": {
             "get": {
                 "tags": [
@@ -548,6 +679,10 @@
         {
             "name": "Keranjang",
             "description": "Keranjang"
+        },
+        {
+            "name": "Transaksi Customer",
+            "description": "Transaksi Customer"
         },
         {
             "name": "Publik",

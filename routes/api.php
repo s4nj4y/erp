@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\Customer\CheckoutController;
 use App\Http\Controllers\Api\Customer\KeranjangController;
+use App\Http\Controllers\Api\Customer\TransaksiController;
 use App\Http\Controllers\Api\ProdukController;
 use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\TokoController;
@@ -29,4 +30,8 @@ Route::middleware(['auth:sanctum', 'role:customer'])->group(function () {
     Route::delete('/keranjang/{keranjang}', [KeranjangController::class, 'destroy']);
     Route::get('/checkout/{umkm}', [CheckoutController::class, 'show']);
     Route::post('/checkout/{umkm}', [CheckoutController::class, 'store']);
+    Route::get('/transaksi', [TransaksiController::class, 'index']);
+    Route::get('/transaksi/{transaksi}', [TransaksiController::class, 'show']);
+    Route::post('/transaksi/{transaksi}/bukti', [TransaksiController::class, 'uploadBukti']);
+    Route::post('/transaksi/{transaksi}/terima', [TransaksiController::class, 'terima']);
 });

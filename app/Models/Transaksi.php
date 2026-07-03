@@ -19,4 +19,10 @@ class Transaksi extends Model
     public function umkm(): BelongsTo { return $this->belongsTo(Umkm::class, 'umkm_id'); }
     public function bank(): BelongsTo { return $this->belongsTo(Bank::class, 'bank_id'); }
     public function detail(): HasMany { return $this->hasMany(TransaksiDetail::class, 'transaksi_id'); }
+
+    /** URL publik bukti pembayaran (null bila belum ada). */
+    public function getBuktiPembayaranUrlAttribute(): ?string
+    {
+        return $this->bukti_pembayaran ? asset('storage/'.$this->bukti_pembayaran) : null;
+    }
 }
