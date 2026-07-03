@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\Customer\KeranjangController;
 use App\Http\Controllers\Api\ProdukController;
 use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\TokoController;
@@ -18,4 +19,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/profile', [ProfileController::class, 'show']);
     Route::patch('/profile', [ProfileController::class, 'update']);
+});
+
+Route::middleware(['auth:sanctum', 'role:customer'])->group(function () {
+    Route::get('/keranjang', [KeranjangController::class, 'index']);
+    Route::post('/keranjang/{produk}', [KeranjangController::class, 'store']);
+    Route::patch('/keranjang/{keranjang}', [KeranjangController::class, 'update']);
+    Route::delete('/keranjang/{keranjang}', [KeranjangController::class, 'destroy']);
 });

@@ -121,6 +121,155 @@
                 ]
             }
         },
+        "/api/keranjang": {
+            "get": {
+                "tags": [
+                    "Keranjang"
+                ],
+                "summary": "Isi keranjang user",
+                "operationId": "7711192db8820e0c3687c3668d345a3c",
+                "responses": {
+                    "200": {
+                        "description": "Daftar item + produk + toko"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/keranjang/{produk}": {
+            "post": {
+                "tags": [
+                    "Keranjang"
+                ],
+                "summary": "Tambah produk ke keranjang",
+                "operationId": "e712c143adaad39562bd09004d5866e8",
+                "parameters": [
+                    {
+                        "name": "produk",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "qty": {
+                                        "type": "integer",
+                                        "default": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Item keranjang"
+                    },
+                    "422": {
+                        "description": "Produk tidak tersedia"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/keranjang/{keranjang}": {
+            "delete": {
+                "tags": [
+                    "Keranjang"
+                ],
+                "summary": "Hapus item",
+                "operationId": "7f3fb8da4d1d8bf9c326152055b9d40a",
+                "parameters": [
+                    {
+                        "name": "keranjang",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Terhapus"
+                    },
+                    "404": {
+                        "description": "Bukan milik user"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "patch": {
+                "tags": [
+                    "Keranjang"
+                ],
+                "summary": "Ubah qty (action increase/decrease atau qty langsung)",
+                "operationId": "026882ec8e27301b2ec27b8b7459210d",
+                "parameters": [
+                    {
+                        "name": "keranjang",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "action": {
+                                        "type": "string",
+                                        "enum": [
+                                            "increase",
+                                            "decrease"
+                                        ]
+                                    },
+                                    "qty": {
+                                        "type": "integer"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Item ter-update"
+                    },
+                    "404": {
+                        "description": "Bukan milik user"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/produk": {
             "get": {
                 "tags": [
@@ -311,6 +460,10 @@
         {
             "name": "Auth",
             "description": "Auth"
+        },
+        {
+            "name": "Keranjang",
+            "description": "Keranjang"
         },
         {
             "name": "Publik",
