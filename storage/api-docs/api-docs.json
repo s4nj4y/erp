@@ -121,6 +121,86 @@
                 ]
             }
         },
+        "/api/checkout/{umkm}": {
+            "get": {
+                "tags": [
+                    "Checkout"
+                ],
+                "summary": "Ringkasan checkout per toko (item, total, rekening)",
+                "operationId": "d8cc20eb469d8b2f25678228691118ee",
+                "parameters": [
+                    {
+                        "name": "umkm",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Ringkasan"
+                    },
+                    "422": {
+                        "description": "Tidak ada item untuk toko ini"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Checkout"
+                ],
+                "summary": "Buat pesanan dari keranjang toko ini",
+                "operationId": "216cfa27a14f4aae07d888027a31ea56",
+                "parameters": [
+                    {
+                        "name": "umkm",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "bank_id"
+                                ],
+                                "properties": {
+                                    "bank_id": {
+                                        "type": "integer"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Transaksi dibuat"
+                    },
+                    "422": {
+                        "description": "Keranjang kosong / bank salah / stok kurang"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/keranjang": {
             "get": {
                 "tags": [
@@ -460,6 +540,10 @@
         {
             "name": "Auth",
             "description": "Auth"
+        },
+        {
+            "name": "Checkout",
+            "description": "Checkout"
         },
         {
             "name": "Keranjang",

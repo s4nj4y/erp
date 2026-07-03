@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\Customer\CheckoutController;
 use App\Http\Controllers\Api\Customer\KeranjangController;
 use App\Http\Controllers\Api\ProdukController;
 use App\Http\Controllers\Api\ProfileController;
@@ -26,4 +27,6 @@ Route::middleware(['auth:sanctum', 'role:customer'])->group(function () {
     Route::post('/keranjang/{produk}', [KeranjangController::class, 'store']);
     Route::patch('/keranjang/{keranjang}', [KeranjangController::class, 'update']);
     Route::delete('/keranjang/{keranjang}', [KeranjangController::class, 'destroy']);
+    Route::get('/checkout/{umkm}', [CheckoutController::class, 'show']);
+    Route::post('/checkout/{umkm}', [CheckoutController::class, 'store']);
 });
