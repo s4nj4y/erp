@@ -10,6 +10,6 @@ trait ResolvesUmkm
     /** Ambil UMKM milik user yang login. Null bila belum dibuat. */
     protected function umkm(Request $request): ?Umkm
     {
-        return $request->user()->umkm;
+        return $request->user()->umkm()->first();
     }
 }

@@ -22,6 +22,7 @@ class DashboardController extends ApiController
         $stats = ['produk' => 0, 'pesanan' => 0, 'perlu_verifikasi' => 0, 'pendapatan' => 0];
 
         if ($umkm) {
+            $umkm->append('foto_url');
             $stats['produk'] = Produk::where('umkm_id', $umkm->id)->count();
             $stats['pesanan'] = Transaksi::where('umkm_id', $umkm->id)->count();
             $stats['perlu_verifikasi'] = Transaksi::where('umkm_id', $umkm->id)

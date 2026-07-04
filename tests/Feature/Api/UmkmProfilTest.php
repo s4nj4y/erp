@@ -22,15 +22,16 @@ class UmkmProfilTest extends TestCase
         $this->pemilik = User::factory()->create(['role' => 'umkm']);
     }
 
-    public function test_rute_umkm_butuh_role_umkm(): void
+    public function test_rute_umkm_butuh_login(): void
+    {
+        $this->getJson('/api/umkm/dashboard')->assertUnauthorized();
+    }
+
+    public function test_rute_umkm_menolak_role_lain(): void
     {
         $customer = User::factory()->create(['role' => 'customer']);
 
-        // customer role tidak boleh akses
         $this->actingAs($customer, 'sanctum')->getJson('/api/umkm/dashboard')->assertForbidden();
-
-        // unauthenticated user tidak boleh akses
-        $this->getJson('/api/umkm/dashboard')->assertForbidden();
     }
 
     public function test_master_data_tersedia_untuk_user_login(): void
@@ -70,7 +71,8 @@ class UmkmProfilTest extends TestCase
         // update
         $this->actingAs($this->pemilik, 'sanctum')->putJson('/api/umkm/profil', [
             'nama_umkm' => 'Toko Diedit',
-        ])->assertOk()->assertJsonPath('data.nama_umkm', 'Toko Diedit');
+        ])->assertOk()->assertJsonPath('data.nama_umkm', 'Toko Diedit')
+            ->assertJsonPath('data.foto_url', null);
 
         $this->assertSame(1, Umkm::count());
     }

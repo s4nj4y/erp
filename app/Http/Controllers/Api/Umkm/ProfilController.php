@@ -18,8 +18,8 @@ class ProfilController extends ApiController
         responses: [new OA\Response(response: 200, description: 'Umkm atau null bila belum dibuat')])]
     public function show(Request $request)
     {
-        $umkm = \App\Models\Umkm::where('user_id', $request->user()->id)->first();
-        $umkm?->load('jenisUsaha', 'rekening.bank');
+        $umkm = $this->umkm($request);
+        $umkm?->load('jenisUsaha', 'rekening.bank')->append('foto_url');
 
         return $this->respond($umkm);
     }
@@ -49,7 +49,7 @@ class ProfilController extends ApiController
             'foto' => 'nullable|image|max:2048',
         ]);
 
-        $umkm = \App\Models\Umkm::where('user_id', $request->user()->id)->first();
+        $umkm = $this->umkm($request);
 
         if ($request->hasFile('foto')) {
             if ($umkm?->foto && ! str_starts_with($umkm->foto, 'http')) {
@@ -66,7 +66,7 @@ class ProfilController extends ApiController
             $umkm = \App\Models\Umkm::create($data);
         }
 
-        return $this->respond($umkm->fresh()->load('jenisUsaha', 'rekening.bank'), 'Profil UMKM disimpan.');
+        return $this->respond($umkm->fresh()->load('jenisUsaha', 'rekening.bank')->append('foto_url'), 'Profil UMKM disimpan.');
     }
 
     #[OA\Post(path: '/api/umkm/profil/rekening', tags: ['UMKM'], summary: 'Tambah rekening bank toko', security: [['bearerAuth' => []]],
@@ -79,7 +79,7 @@ class ProfilController extends ApiController
             new OA\Response(response: 409, description: 'Belum ada profil UMKM')])]
     public function storeRekening(Request $request)
     {
-        $umkm = \App\Models\Umkm::where('user_id', $request->user()->id)->first();
+        $umkm = $this->umkm($request);
         abort_if(! $umkm, 409, 'Lengkapi profil UMKM dulu.');
 
         $data = $request->validate([
