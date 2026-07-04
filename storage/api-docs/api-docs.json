@@ -481,6 +481,63 @@
                 ]
             }
         },
+        "/api/master/jenis-usaha": {
+            "get": {
+                "tags": [
+                    "Master"
+                ],
+                "summary": "Daftar jenis usaha",
+                "operationId": "1186ecd5dc4b420ffaa821601beb673a",
+                "responses": {
+                    "200": {
+                        "description": "Array jenis usaha"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/master/bank": {
+            "get": {
+                "tags": [
+                    "Master"
+                ],
+                "summary": "Daftar bank",
+                "operationId": "8fc8679d28055c817f15099aed98c632",
+                "responses": {
+                    "200": {
+                        "description": "Array bank"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/master/kategori-produk": {
+            "get": {
+                "tags": [
+                    "Master"
+                ],
+                "summary": "Daftar kategori produk",
+                "operationId": "27ec3adc19fc53c7edf77ce30f170968",
+                "responses": {
+                    "200": {
+                        "description": "Array kategori"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/produk": {
             "get": {
                 "tags": [
@@ -657,6 +714,187 @@
                     }
                 }
             }
+        },
+        "/api/umkm/dashboard": {
+            "get": {
+                "tags": [
+                    "UMKM"
+                ],
+                "summary": "Ringkasan dashboard penjual",
+                "operationId": "ab4864a576ad7e28445c951287b9c387",
+                "responses": {
+                    "200": {
+                        "description": "umkm (null bila belum ada) + stats"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/umkm/profil": {
+            "get": {
+                "tags": [
+                    "UMKM"
+                ],
+                "summary": "Profil toko + rekening",
+                "operationId": "da5d3c5abf8cf26c4904f69dd0f94859",
+                "responses": {
+                    "200": {
+                        "description": "Umkm atau null bila belum dibuat"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "UMKM"
+                ],
+                "summary": "Buat/ubah profil toko (multipart pakai POST + _method=PUT utk foto)",
+                "operationId": "e22c6585362756b76ffcaeaf775cff8c",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "nama_umkm"
+                                ],
+                                "properties": {
+                                    "nama_umkm": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "nullable": true
+                                    },
+                                    "no_wa": {
+                                        "type": "string",
+                                        "nullable": true
+                                    },
+                                    "alamat": {
+                                        "type": "string",
+                                        "nullable": true
+                                    },
+                                    "deskripsi": {
+                                        "type": "string",
+                                        "nullable": true
+                                    },
+                                    "tgl_pendirian": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "nullable": true
+                                    },
+                                    "nama_pendiri": {
+                                        "type": "string",
+                                        "nullable": true
+                                    },
+                                    "jenis_usaha_id": {
+                                        "type": "integer",
+                                        "nullable": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Umkm tersimpan"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/umkm/profil/rekening": {
+            "post": {
+                "tags": [
+                    "UMKM"
+                ],
+                "summary": "Tambah rekening bank toko",
+                "operationId": "50b723a2f8441ea688cf2cd9b040b828",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "bank_id",
+                                    "atas_nama",
+                                    "rekening"
+                                ],
+                                "properties": {
+                                    "bank_id": {
+                                        "type": "integer"
+                                    },
+                                    "atas_nama": {
+                                        "type": "string"
+                                    },
+                                    "rekening": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Rekening dibuat"
+                    },
+                    "409": {
+                        "description": "Belum ada profil UMKM"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/umkm/profil/rekening/{rekening}": {
+            "delete": {
+                "tags": [
+                    "UMKM"
+                ],
+                "summary": "Hapus rekening",
+                "operationId": "52003e38ba17816eb68c7f309b37adfc",
+                "parameters": [
+                    {
+                        "name": "rekening",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Terhapus"
+                    },
+                    "404": {
+                        "description": "Bukan milik toko user"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
         }
     },
     "components": {
@@ -685,12 +923,20 @@
             "description": "Transaksi Customer"
         },
         {
+            "name": "Master",
+            "description": "Master"
+        },
+        {
             "name": "Publik",
             "description": "Publik"
         },
         {
             "name": "Profil",
             "description": "Profil"
+        },
+        {
+            "name": "UMKM",
+            "description": "UMKM"
         }
     ]
 }
