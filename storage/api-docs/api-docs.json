@@ -1158,6 +1158,157 @@
                     }
                 ]
             }
+        },
+        "/api/umkm/transaksi": {
+            "get": {
+                "tags": [
+                    "UMKM Transaksi"
+                ],
+                "summary": "Pesanan masuk (filter ?status= status_bayar)",
+                "operationId": "33e06079ee4fd09a8f2e204f924be754",
+                "parameters": [
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Paginasi transaksi"
+                    },
+                    "409": {
+                        "description": "Belum ada profil UMKM"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/umkm/transaksi/{transaksi}": {
+            "get": {
+                "tags": [
+                    "UMKM Transaksi"
+                ],
+                "summary": "Detail pesanan + total",
+                "operationId": "af0ac90e0f2be5c4da6b32591f7f21b1",
+                "parameters": [
+                    {
+                        "name": "transaksi",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Detail + total"
+                    },
+                    "404": {
+                        "description": "Bukan pesanan toko user"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/umkm/transaksi/{transaksi}/verifikasi": {
+            "post": {
+                "tags": [
+                    "UMKM Transaksi"
+                ],
+                "summary": "Verifikasi pembayaran → diproses",
+                "operationId": "1b18bb602c6541f2c9eafc8ce65dc583",
+                "parameters": [
+                    {
+                        "name": "transaksi",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Terverifikasi"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/umkm/transaksi/{transaksi}/tolak": {
+            "post": {
+                "tags": [
+                    "UMKM Transaksi"
+                ],
+                "summary": "Tolak pembayaran → stok dikembalikan",
+                "operationId": "650ae7362c167d886758c9a369761e76",
+                "parameters": [
+                    {
+                        "name": "transaksi",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Ditolak, stok kembali"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/umkm/transaksi/{transaksi}/kirim": {
+            "post": {
+                "tags": [
+                    "UMKM Transaksi"
+                ],
+                "summary": "Tandai pesanan dikirim",
+                "operationId": "47070189e16b2ddc722452e06fbe03d3",
+                "parameters": [
+                    {
+                        "name": "transaksi",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Dikirim"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
         }
     },
     "components": {
@@ -1204,6 +1355,10 @@
         {
             "name": "UMKM Produk",
             "description": "UMKM Produk"
+        },
+        {
+            "name": "UMKM Transaksi",
+            "description": "UMKM Transaksi"
         }
     ]
 }
