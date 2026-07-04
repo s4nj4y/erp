@@ -753,6 +753,123 @@
                 ]
             }
         },
+        "/api/umkm/laporan/laba-rugi": {
+            "get": {
+                "tags": [
+                    "UMKM Laporan"
+                ],
+                "summary": "Laba rugi (?from=&to=, default bulan berjalan)",
+                "operationId": "b5f2b2324ce93a03c31828763243cf65",
+                "parameters": [
+                    {
+                        "name": "from",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    },
+                    {
+                        "name": "to",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "pendapatan/hpp/laba_kotor/pengeluaran/laba_bersih"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/umkm/laporan/pendapatan": {
+            "get": {
+                "tags": [
+                    "UMKM Laporan"
+                ],
+                "summary": "Rincian pendapatan per transaksi",
+                "operationId": "dff54356a9c9d6a29400fa805d7b2f8f",
+                "parameters": [
+                    {
+                        "name": "from",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    },
+                    {
+                        "name": "to",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "rows + total_pendapatan"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/umkm/laporan/perubahan-modal": {
+            "get": {
+                "tags": [
+                    "UMKM Laporan"
+                ],
+                "summary": "Perubahan modal periode",
+                "operationId": "466d3332723936ed459ba332a477e94c",
+                "parameters": [
+                    {
+                        "name": "from",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    },
+                    {
+                        "name": "to",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "modal_awal/penambahan/laba_bersih/pengambilan/modal_akhir"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/umkm/pengeluaran": {
             "get": {
                 "tags": [
@@ -1613,6 +1730,10 @@
         {
             "name": "UMKM",
             "description": "UMKM"
+        },
+        {
+            "name": "UMKM Laporan",
+            "description": "UMKM Laporan"
         },
         {
             "name": "UMKM Keuangan",

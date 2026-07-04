@@ -15,6 +15,7 @@ use App\Http\Controllers\Api\Umkm\ProfilController as UmkmProfil;
 use App\Http\Controllers\Api\Umkm\SaldoController as UmkmSaldo;
 use App\Http\Controllers\Api\Umkm\StokController as UmkmStok;
 use App\Http\Controllers\Api\Umkm\TransaksiController as UmkmTransaksi;
+use App\Http\Controllers\Api\Umkm\LaporanController as UmkmLaporan;
 use Illuminate\Support\Facades\Route;
 
 Route::post('/register', [AuthController::class, 'register']);
@@ -64,6 +65,9 @@ Route::middleware(['auth:sanctum', 'role:umkm'])->prefix('umkm')->group(function
     Route::post('/pengeluaran', [UmkmPengeluaran::class, 'store']);
     Route::get('/pengeluaran/{pengeluaran}', [UmkmPengeluaran::class, 'show']);
     Route::delete('/pengeluaran/{pengeluaran}', [UmkmPengeluaran::class, 'destroy']);
+    Route::get('/laporan/laba-rugi', [UmkmLaporan::class, 'labaRugi']);
+    Route::get('/laporan/pendapatan', [UmkmLaporan::class, 'pendapatan']);
+    Route::get('/laporan/perubahan-modal', [UmkmLaporan::class, 'perubahanModal']);
 });
 
 Route::middleware(['auth:sanctum', 'role:customer'])->group(function () {
