@@ -25,4 +25,20 @@ class Transaksi extends Model
     {
         return $this->bukti_pembayaran ? asset('storage/'.$this->bukti_pembayaran) : null;
     }
+
+    /** State machine pesanan: guard bersama web + API agar tidak bisa dieksekusi dua kali. */
+    public function bolehVerifikasi(): bool
+    {
+        return $this->status_bayar === 'menunggu_verifikasi';
+    }
+
+    public function bolehTolak(): bool
+    {
+        return $this->status_bayar === 'menunggu_verifikasi';
+    }
+
+    public function bolehKirim(): bool
+    {
+        return $this->status === 'diproses';
+    }
 }

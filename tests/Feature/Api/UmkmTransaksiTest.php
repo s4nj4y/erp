@@ -86,9 +86,48 @@ class UmkmTransaksiTest extends TestCase
 
     public function test_kirim(): void
     {
+        $this->trx->update(['status' => 'diproses']);
+
         $this->actingAs($this->pemilik, 'sanctum')
             ->postJson("/api/umkm/transaksi/{$this->trx->id}/kirim")->assertOk();
 
         $this->assertSame('dikirim', $this->trx->fresh()->status);
+    }
+
+    public function test_tolak_dua_kali_stok_hanya_kembali_sekali(): void
+    {
+        $this->actingAs($this->pemilik, 'sanctum')
+            ->postJson("/api/umkm/transaksi/{$this->trx->id}/tolak")->assertOk();
+
+        $this->actingAs($this->pemilik, 'sanctum')
+            ->postJson("/api/umkm/transaksi/{$this->trx->id}/tolak")->assertUnprocessable();
+
+        $this->assertSame(5, $this->produk->fresh()->stok); // 3 + 2, bukan 3 + 2 + 2
+        $this->assertDatabaseCount('stok', 1);
+    }
+
+    public function test_verifikasi_saat_belum_bayar_422(): void
+    {
+        $this->trx->update(['status_bayar' => 'belum']);
+
+        $this->actingAs($this->pemilik, 'sanctum')
+            ->postJson("/api/umkm/transaksi/{$this->trx->id}/verifikasi")->assertUnprocessable();
+    }
+
+    public function test_kirim_saat_status_pending_422(): void
+    {
+        $this->trx->update(['status' => 'pending']);
+
+        $this->actingAs($this->pemilik, 'sanctum')
+            ->postJson("/api/umkm/transaksi/{$this->trx->id}/kirim")->assertUnprocessable();
+    }
+
+    public function test_verifikasi_setelah_tolak_422(): void
+    {
+        $this->actingAs($this->pemilik, 'sanctum')
+            ->postJson("/api/umkm/transaksi/{$this->trx->id}/tolak")->assertOk();
+
+        $this->actingAs($this->pemilik, 'sanctum')
+            ->postJson("/api/umkm/transaksi/{$this->trx->id}/verifikasi")->assertUnprocessable();
     }
 }

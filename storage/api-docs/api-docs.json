@@ -1622,6 +1622,9 @@
                 "responses": {
                     "200": {
                         "description": "Terverifikasi"
+                    },
+                    "422": {
+                        "description": "Status pembayaran sudah bukan menunggu_verifikasi"
                     }
                 },
                 "security": [
@@ -1651,6 +1654,9 @@
                 "responses": {
                     "200": {
                         "description": "Ditolak, stok kembali"
+                    },
+                    "422": {
+                        "description": "Status pembayaran sudah bukan menunggu_verifikasi"
                     }
                 },
                 "security": [
@@ -1680,6 +1686,9 @@
                 "responses": {
                     "200": {
                         "description": "Dikirim"
+                    },
+                    "422": {
+                        "description": "Status pesanan bukan diproses"
                     }
                 },
                 "security": [

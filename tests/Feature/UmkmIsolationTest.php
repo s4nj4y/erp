@@ -96,6 +96,30 @@ class UmkmIsolationTest extends TestCase
         $this->assertDatabaseHas('keranjang_belanja', ['id' => $item->id]);
     }
 
+    public function test_tolak_dua_kali_via_web_stok_hanya_kembali_sekali(): void
+    {
+        [$userA, $umkmA] = $this->umkmUser();
+        $produk = Produk::create(['umkm_id' => $umkmA->id, 'nama_produk' => 'A', 'harga' => 10000, 'stok' => 3]);
+        $customer = User::factory()->create(['role' => 'customer']);
+        $trx = Transaksi::create([
+            'customer_id' => $customer->id, 'umkm_id' => $umkmA->id,
+            'kode_transaksi' => 'TRX-C', 'tanggal' => now(),
+            'status' => 'pending', 'status_bayar' => 'menunggu_verifikasi',
+        ]);
+        $trx->detail()->create(['produk_id' => $produk->id, 'qty' => 2, 'harga' => 10000]);
+
+        $this->actingAs($userA)
+            ->post(route('umkm.transaksi.tolak', $trx))
+            ->assertRedirect();
+
+        $this->actingAs($userA)
+            ->post(route('umkm.transaksi.tolak', $trx))
+            ->assertRedirect();
+
+        $this->assertSame(5, $produk->fresh()->stok); // 3 + 2, bukan dua kali
+        $this->assertDatabaseCount('stok', 1);
+    }
+
     public function test_admin_bypasses_ownership_via_policy(): void
     {
         [, $umkmA] = $this->umkmUser();

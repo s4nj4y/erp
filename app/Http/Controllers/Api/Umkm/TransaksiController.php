@@ -8,6 +8,7 @@ use App\Models\Stok;
 use App\Models\Transaksi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 use OpenApi\Attributes as OA;
 
 class TransaksiController extends ApiController
@@ -52,25 +53,39 @@ class TransaksiController extends ApiController
 
     #[OA\Post(path: '/api/umkm/transaksi/{transaksi}/verifikasi', tags: ['UMKM Transaksi'], summary: 'Verifikasi pembayaran → diproses', security: [['bearerAuth' => []]],
         parameters: [new OA\Parameter(name: 'transaksi', in: 'path', required: true, schema: new OA\Schema(type: 'integer'))],
-        responses: [new OA\Response(response: 200, description: 'Terverifikasi')])]
+        responses: [new OA\Response(response: 200, description: 'Terverifikasi'),
+            new OA\Response(response: 422, description: 'Status pembayaran sudah bukan menunggu_verifikasi')])]
     public function verifikasi(Request $request, Transaksi $transaksi)
     {
         $this->authorize('manage', $transaksi);
-        $transaksi->update(['status_bayar' => 'terverifikasi', 'status' => 'diproses']);
+
+        DB::transaction(function () use ($transaksi) {
+            $terkunci = Transaksi::whereKey($transaksi->id)->lockForUpdate()->first();
+            if (! $terkunci->bolehVerifikasi()) {
+                throw ValidationException::withMessages(['status_bayar' => 'Pembayaran sudah diproses sebelumnya.']);
+            }
+            $terkunci->update(['status_bayar' => 'terverifikasi', 'status' => 'diproses']);
+        });
 
         return $this->respond($transaksi->fresh(), 'Pembayaran diverifikasi. Pesanan diproses.');
     }
 
     #[OA\Post(path: '/api/umkm/transaksi/{transaksi}/tolak', tags: ['UMKM Transaksi'], summary: 'Tolak pembayaran → stok dikembalikan', security: [['bearerAuth' => []]],
         parameters: [new OA\Parameter(name: 'transaksi', in: 'path', required: true, schema: new OA\Schema(type: 'integer'))],
-        responses: [new OA\Response(response: 200, description: 'Ditolak, stok kembali')])]
+        responses: [new OA\Response(response: 200, description: 'Ditolak, stok kembali'),
+            new OA\Response(response: 422, description: 'Status pembayaran sudah bukan menunggu_verifikasi')])]
     public function tolak(Request $request, Transaksi $transaksi)
     {
         $this->authorize('manage', $transaksi);
 
         DB::transaction(function () use ($transaksi) {
-            $transaksi->loadMissing('detail.produk');
-            foreach ($transaksi->detail as $d) {
+            $terkunci = Transaksi::whereKey($transaksi->id)->lockForUpdate()->first();
+            if (! $terkunci->bolehTolak()) {
+                throw ValidationException::withMessages(['status_bayar' => 'Pembayaran sudah diproses sebelumnya.']);
+            }
+
+            $terkunci->loadMissing('detail.produk');
+            foreach ($terkunci->detail as $d) {
                 if ($d->produk) {
                     $d->produk->increment('stok', $d->qty);
                     Stok::create([
@@ -79,11 +94,11 @@ class TransaksiController extends ApiController
                         'jumlah_masuk' => $d->qty,
                         'jumlah_keluar' => 0,
                         'tanggal' => now()->toDateString(),
-                        'keterangan' => 'Pembatalan '.$transaksi->kode_transaksi,
+                        'keterangan' => 'Pembatalan '.$terkunci->kode_transaksi,
                     ]);
                 }
             }
-            $transaksi->update(['status_bayar' => 'ditolak', 'status' => 'dibatalkan']);
+            $terkunci->update(['status_bayar' => 'ditolak', 'status' => 'dibatalkan']);
         });
 
         return $this->respond($transaksi->fresh(), 'Pembayaran ditolak. Stok dikembalikan.');
@@ -91,11 +106,19 @@ class TransaksiController extends ApiController
 
     #[OA\Post(path: '/api/umkm/transaksi/{transaksi}/kirim', tags: ['UMKM Transaksi'], summary: 'Tandai pesanan dikirim', security: [['bearerAuth' => []]],
         parameters: [new OA\Parameter(name: 'transaksi', in: 'path', required: true, schema: new OA\Schema(type: 'integer'))],
-        responses: [new OA\Response(response: 200, description: 'Dikirim')])]
+        responses: [new OA\Response(response: 200, description: 'Dikirim'),
+            new OA\Response(response: 422, description: 'Status pesanan bukan diproses')])]
     public function kirim(Request $request, Transaksi $transaksi)
     {
         $this->authorize('manage', $transaksi);
-        $transaksi->update(['status' => 'dikirim']);
+
+        DB::transaction(function () use ($transaksi) {
+            $terkunci = Transaksi::whereKey($transaksi->id)->lockForUpdate()->first();
+            if (! $terkunci->bolehKirim()) {
+                throw ValidationException::withMessages(['status' => 'Pesanan belum siap dikirim.']);
+            }
+            $terkunci->update(['status' => 'dikirim']);
+        });
 
         return $this->respond($transaksi->fresh(), 'Pesanan ditandai dikirim.');
     }

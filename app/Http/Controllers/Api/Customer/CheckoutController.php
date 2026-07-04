@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\Customer;
 
 use App\Http\Controllers\Api\ApiController;
 use App\Models\KeranjangBelanja;
+use App\Models\Produk;
 use App\Models\Stok;
 use App\Models\Transaksi;
 use App\Models\Umkm;
@@ -55,12 +56,6 @@ class CheckoutController extends ApiController
             'bank_id' => ['required', Rule::exists('rekening_bank', 'bank_id')->where('umkm_id', $umkm->id)],
         ]);
 
-        foreach ($items as $item) {
-            if ($item->qty > $item->produk->stok) {
-                throw ValidationException::withMessages(['stok' => "Stok '{$item->produk->nama_produk}' tidak mencukupi."]);
-            }
-        }
-
         $transaksi = DB::transaction(function () use ($request, $umkm, $items, $data) {
             $trx = Transaksi::create([
                 'customer_id' => $request->user()->id,
@@ -73,13 +68,19 @@ class CheckoutController extends ApiController
             ]);
 
             foreach ($items as $item) {
+                // Kunci baris produk agar cek stok & decrement konsisten walau ada checkout bersamaan.
+                $produk = Produk::whereKey($item->produk_id)->lockForUpdate()->first();
+                if ($item->qty > $produk->stok) {
+                    throw ValidationException::withMessages(['stok' => "Stok '{$produk->nama_produk}' tidak mencukupi."]);
+                }
+
                 $trx->detail()->create([
                     'produk_id' => $item->produk_id,
                     'qty' => $item->qty,
-                    'harga' => $item->produk->harga,
+                    'harga' => $produk->harga,
                 ]);
 
-                $item->produk->decrement('stok', $item->qty);
+                $produk->decrement('stok', $item->qty);
                 Stok::create([
                     'produk_id' => $item->produk_id,
                     'status' => 'keluar',

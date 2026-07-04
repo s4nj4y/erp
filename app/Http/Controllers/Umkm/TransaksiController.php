@@ -46,7 +46,20 @@ class TransaksiController extends Controller
     public function verifikasi(Request $request, Transaksi $transaksi): RedirectResponse
     {
         $this->authorize('manage', $transaksi);
-        $transaksi->update(['status_bayar' => 'terverifikasi', 'status' => 'diproses']);
+
+        $boleh = DB::transaction(function () use ($transaksi) {
+            $terkunci = Transaksi::whereKey($transaksi->id)->lockForUpdate()->first();
+            if (! $terkunci->bolehVerifikasi()) {
+                return false;
+            }
+            $terkunci->update(['status_bayar' => 'terverifikasi', 'status' => 'diproses']);
+
+            return true;
+        });
+
+        if (! $boleh) {
+            return back()->withErrors(['status_bayar' => 'Pembayaran sudah diproses sebelumnya.']);
+        }
 
         return back()->with('success', 'Pembayaran diverifikasi. Pesanan diproses.');
     }
@@ -56,9 +69,14 @@ class TransaksiController extends Controller
     {
         $this->authorize('manage', $transaksi);
 
-        DB::transaction(function () use ($transaksi) {
-            $transaksi->loadMissing('detail.produk');
-            foreach ($transaksi->detail as $d) {
+        $boleh = DB::transaction(function () use ($transaksi) {
+            $terkunci = Transaksi::whereKey($transaksi->id)->lockForUpdate()->first();
+            if (! $terkunci->bolehTolak()) {
+                return false;
+            }
+
+            $terkunci->loadMissing('detail.produk');
+            foreach ($terkunci->detail as $d) {
                 if ($d->produk) {
                     $d->produk->increment('stok', $d->qty);
                     Stok::create([
@@ -67,12 +85,18 @@ class TransaksiController extends Controller
                         'jumlah_masuk' => $d->qty,
                         'jumlah_keluar' => 0,
                         'tanggal' => now()->toDateString(),
-                        'keterangan' => 'Pembatalan '.$transaksi->kode_transaksi,
+                        'keterangan' => 'Pembatalan '.$terkunci->kode_transaksi,
                     ]);
                 }
             }
-            $transaksi->update(['status_bayar' => 'ditolak', 'status' => 'dibatalkan']);
+            $terkunci->update(['status_bayar' => 'ditolak', 'status' => 'dibatalkan']);
+
+            return true;
         });
+
+        if (! $boleh) {
+            return back()->withErrors(['status_bayar' => 'Pembayaran sudah diproses sebelumnya.']);
+        }
 
         return back()->with('success', 'Pembayaran ditolak. Stok dikembalikan.');
     }
@@ -81,7 +105,20 @@ class TransaksiController extends Controller
     public function kirim(Request $request, Transaksi $transaksi): RedirectResponse
     {
         $this->authorize('manage', $transaksi);
-        $transaksi->update(['status' => 'dikirim']);
+
+        $boleh = DB::transaction(function () use ($transaksi) {
+            $terkunci = Transaksi::whereKey($transaksi->id)->lockForUpdate()->first();
+            if (! $terkunci->bolehKirim()) {
+                return false;
+            }
+            $terkunci->update(['status' => 'dikirim']);
+
+            return true;
+        });
+
+        if (! $boleh) {
+            return back()->withErrors(['status' => 'Pesanan belum siap dikirim.']);
+        }
 
         return back()->with('success', 'Pesanan ditandai dikirim.');
     }
