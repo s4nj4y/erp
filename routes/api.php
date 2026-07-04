@@ -9,7 +9,9 @@ use App\Http\Controllers\Api\ProdukController;
 use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\TokoController;
 use App\Http\Controllers\Api\Umkm\DashboardController as UmkmDashboard;
+use App\Http\Controllers\Api\Umkm\ProdukController as UmkmProduk;
 use App\Http\Controllers\Api\Umkm\ProfilController as UmkmProfil;
+use App\Http\Controllers\Api\Umkm\StokController as UmkmStok;
 use Illuminate\Support\Facades\Route;
 
 Route::post('/register', [AuthController::class, 'register']);
@@ -38,6 +40,14 @@ Route::middleware(['auth:sanctum', 'role:umkm'])->prefix('umkm')->group(function
     Route::put('/profil', [UmkmProfil::class, 'update']);
     Route::post('/profil/rekening', [UmkmProfil::class, 'storeRekening']);
     Route::delete('/profil/rekening/{rekening}', [UmkmProfil::class, 'destroyRekening']);
+    Route::get('/produk', [UmkmProduk::class, 'index']);
+    Route::post('/produk', [UmkmProduk::class, 'store']);
+    Route::get('/produk/{produk}', [UmkmProduk::class, 'show']);
+    Route::put('/produk/{produk}', [UmkmProduk::class, 'update']);
+    Route::delete('/produk/{produk}', [UmkmProduk::class, 'destroy']);
+    Route::patch('/produk/{produk}/toggle', [UmkmProduk::class, 'toggleStatus']);
+    Route::post('/produk/{produk}/stok', [UmkmStok::class, 'store']);
+    Route::delete('/stok/{stok}', [UmkmStok::class, 'destroy']);
 });
 
 Route::middleware(['auth:sanctum', 'role:customer'])->group(function () {

@@ -734,6 +734,173 @@
                 ]
             }
         },
+        "/api/umkm/produk": {
+            "get": {
+                "tags": [
+                    "UMKM Produk"
+                ],
+                "summary": "Produk milik toko (cari ?q=)",
+                "operationId": "ed12880e12321a533b1a551b9dc3b440",
+                "parameters": [
+                    {
+                        "name": "q",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Paginasi produk"
+                    },
+                    "409": {
+                        "description": "Belum ada profil UMKM"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "UMKM Produk"
+                ],
+                "summary": "Tambah produk (multipart utk gambar)",
+                "operationId": "9fe3567e9ff1a01c79d88a5704587914",
+                "responses": {
+                    "201": {
+                        "description": "Produk dibuat"
+                    },
+                    "409": {
+                        "description": "Belum ada profil UMKM"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/umkm/produk/{produk}": {
+            "get": {
+                "tags": [
+                    "UMKM Produk"
+                ],
+                "summary": "Detail produk + riwayat stok",
+                "operationId": "525f3eed8000a3a970c6251e044b7e6d",
+                "parameters": [
+                    {
+                        "name": "produk",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Produk + stoks"
+                    },
+                    "404": {
+                        "description": "Bukan milik toko user"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "UMKM Produk"
+                ],
+                "summary": "Ubah produk (multipart pakai POST + _method=PUT)",
+                "operationId": "403d9209ceef72e367bf5ab69ccf7843",
+                "parameters": [
+                    {
+                        "name": "produk",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Produk diperbarui"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "UMKM Produk"
+                ],
+                "summary": "Hapus produk",
+                "operationId": "61bf788fdd90d46a490f6b9ba89aaeae",
+                "parameters": [
+                    {
+                        "name": "produk",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Terhapus"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/umkm/produk/{produk}/toggle": {
+            "patch": {
+                "tags": [
+                    "UMKM Produk"
+                ],
+                "summary": "Balik status tampil",
+                "operationId": "2108debe70f4e6f407deacdc0ce502a6",
+                "parameters": [
+                    {
+                        "name": "produk",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Status tampil diperbarui"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/umkm/profil": {
             "get": {
                 "tags": [
@@ -895,6 +1062,102 @@
                     }
                 ]
             }
+        },
+        "/api/umkm/produk/{produk}/stok": {
+            "post": {
+                "tags": [
+                    "UMKM Produk"
+                ],
+                "summary": "Catat pergerakan stok",
+                "operationId": "d4e816853ed229ab707ee6e3b0659e34",
+                "parameters": [
+                    {
+                        "name": "produk",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "status",
+                                    "jumlah",
+                                    "tanggal"
+                                ],
+                                "properties": {
+                                    "status": {
+                                        "type": "string",
+                                        "enum": [
+                                            "masuk",
+                                            "keluar"
+                                        ]
+                                    },
+                                    "jumlah": {
+                                        "type": "integer"
+                                    },
+                                    "tanggal": {
+                                        "type": "string",
+                                        "format": "date"
+                                    },
+                                    "keterangan": {
+                                        "type": "string",
+                                        "nullable": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Tercatat, stok produk ter-update"
+                    },
+                    "422": {
+                        "description": "Jumlah keluar melebihi stok"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/umkm/stok/{stok}": {
+            "delete": {
+                "tags": [
+                    "UMKM Produk"
+                ],
+                "summary": "Hapus catatan stok (stok produk dikoreksi)",
+                "operationId": "7dd3133568f9ed42eafc3e416add52a9",
+                "parameters": [
+                    {
+                        "name": "stok",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Terhapus"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
         }
     },
     "components": {
@@ -937,6 +1200,10 @@
         {
             "name": "UMKM",
             "description": "UMKM"
+        },
+        {
+            "name": "UMKM Produk",
+            "description": "UMKM Produk"
         }
     ]
 }
