@@ -42,6 +42,7 @@ class UmkmProdukTest extends TestCase
 
         $res->assertOk();
         $this->assertCount(1, $res->json('data.data'));
+        $this->assertSame(5000, $res->json('data.data.0.harga_modal'));
 
         $this->assertCount(0, $this->actingAs($this->pemilik, 'sanctum')
             ->getJson('/api/umkm/produk?q=Rahasia')->json('data.data'));
@@ -53,7 +54,7 @@ class UmkmProdukTest extends TestCase
             'nama_produk' => 'Sambal', 'harga_modal' => 3000, 'harga' => 8000, 'stok' => 10, 'show' => true,
         ]);
 
-        $res->assertCreated()->assertJsonPath('data.nama_produk', 'Sambal');
+        $res->assertCreated()->assertJsonPath('data.nama_produk', 'Sambal')->assertJsonPath('data.harga_modal', 3000);
         $this->assertDatabaseHas('produk', ['nama_produk' => 'Sambal', 'umkm_id' => $this->umkm->id]);
     }
 

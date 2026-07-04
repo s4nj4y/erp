@@ -29,7 +29,7 @@ class ProdukController extends ApiController
             ->latest()
             ->paginate(10);
 
-        $produk->getCollection()->transform(fn ($p) => $p->append('gambar_url'));
+        $produk->getCollection()->transform(fn ($p) => $p->append('gambar_url')->makeVisible('harga_modal'));
 
         return $this->respond($produk);
     }
@@ -42,7 +42,7 @@ class ProdukController extends ApiController
     {
         $this->authorize('update', $produk);
 
-        return $this->respond($produk->load('kategori', 'stoks')->append('gambar_url'));
+        return $this->respond($produk->load('kategori', 'stoks')->append('gambar_url')->makeVisible('harga_modal'));
     }
 
     #[OA\Post(path: '/api/umkm/produk', tags: ['UMKM Produk'], summary: 'Tambah produk (multipart utk gambar)', security: [['bearerAuth' => []]],
@@ -61,7 +61,7 @@ class ProdukController extends ApiController
         $data['show'] = $request->boolean('show');
         $produk = Produk::create($data);
 
-        return $this->respond($produk->append('gambar_url'), 'Produk ditambahkan.', 201);
+        return $this->respond($produk->append('gambar_url')->makeVisible('harga_modal'), 'Produk ditambahkan.', 201);
     }
 
     #[OA\Put(path: '/api/umkm/produk/{produk}', tags: ['UMKM Produk'], summary: 'Ubah produk (multipart pakai POST + _method=PUT)', security: [['bearerAuth' => []]],
@@ -82,7 +82,7 @@ class ProdukController extends ApiController
         }
         $produk->update($data);
 
-        return $this->respond($produk->fresh()->append('gambar_url'), 'Produk diperbarui.');
+        return $this->respond($produk->fresh()->append('gambar_url')->makeVisible('harga_modal'), 'Produk diperbarui.');
     }
 
     #[OA\Delete(path: '/api/umkm/produk/{produk}', tags: ['UMKM Produk'], summary: 'Hapus produk', security: [['bearerAuth' => []]],
@@ -107,7 +107,7 @@ class ProdukController extends ApiController
         $this->authorize('update', $produk);
         $produk->update(['show' => ! $produk->show]);
 
-        return $this->respond($produk->fresh()->append('gambar_url'), 'Status tampil diperbarui.');
+        return $this->respond($produk->fresh()->append('gambar_url')->makeVisible('harga_modal'), 'Status tampil diperbarui.');
     }
 
     private function validateData(Request $request): array
