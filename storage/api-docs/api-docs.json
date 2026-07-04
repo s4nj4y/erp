@@ -538,6 +538,25 @@
                 ]
             }
         },
+        "/api/master/jenis-pengeluaran": {
+            "get": {
+                "tags": [
+                    "Master"
+                ],
+                "summary": "Daftar jenis pengeluaran",
+                "operationId": "381f6e4ab911f26bcbd838cb69f4e470",
+                "responses": {
+                    "200": {
+                        "description": "Array jenis pengeluaran"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/produk": {
             "get": {
                 "tags": [
@@ -725,6 +744,145 @@
                 "responses": {
                     "200": {
                         "description": "umkm (null bila belum ada) + stats"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/umkm/pengeluaran": {
+            "get": {
+                "tags": [
+                    "UMKM Keuangan"
+                ],
+                "summary": "Daftar pengeluaran + total keseluruhan",
+                "operationId": "48991465153eb097b8fd5d740633ffe8",
+                "responses": {
+                    "200": {
+                        "description": "{pengeluaran: paginasi, total}"
+                    },
+                    "409": {
+                        "description": "Belum ada profil UMKM"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "UMKM Keuangan"
+                ],
+                "summary": "Catat pengeluaran (multi item)",
+                "operationId": "645d064dd5f8a7c6e8146a3d1eb721f7",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "tanggal_pengeluaran",
+                                    "items"
+                                ],
+                                "properties": {
+                                    "jenis_pengeluaran_id": {
+                                        "type": "integer",
+                                        "nullable": true
+                                    },
+                                    "tanggal_pengeluaran": {
+                                        "type": "string",
+                                        "format": "date"
+                                    },
+                                    "items": {
+                                        "type": "array",
+                                        "items": {
+                                            "properties": {
+                                                "keterangan": {
+                                                    "type": "string"
+                                                },
+                                                "qty": {
+                                                    "type": "integer"
+                                                },
+                                                "harga": {
+                                                    "type": "integer"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Pengeluaran + detail tersimpan"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/umkm/pengeluaran/{pengeluaran}": {
+            "get": {
+                "tags": [
+                    "UMKM Keuangan"
+                ],
+                "summary": "Detail pengeluaran",
+                "operationId": "33731ec0d3d66ee830ca94416f23b5c9",
+                "parameters": [
+                    {
+                        "name": "pengeluaran",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Pengeluaran + jenis + detail"
+                    },
+                    "404": {
+                        "description": "Bukan milik toko user"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "UMKM Keuangan"
+                ],
+                "summary": "Hapus pengeluaran",
+                "operationId": "3d470eaeac1fe7b61c29f801f60705c3",
+                "parameters": [
+                    {
+                        "name": "pengeluaran",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Terhapus"
                     }
                 },
                 "security": [
@@ -1063,6 +1221,110 @@
                 ]
             }
         },
+        "/api/umkm/saldo": {
+            "get": {
+                "tags": [
+                    "UMKM Keuangan"
+                ],
+                "summary": "Riwayat modal + modal saat ini",
+                "operationId": "44a16a85414f710d8d6ee6f0ed8fab15",
+                "responses": {
+                    "200": {
+                        "description": "{saldo: paginasi, modal_saat_ini}"
+                    },
+                    "409": {
+                        "description": "Belum ada profil UMKM"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "UMKM Keuangan"
+                ],
+                "summary": "Catat mutasi modal",
+                "operationId": "b40213ab0f0b3b291bdf18d1787be5ea",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "tanggal_transaksi",
+                                    "jenis_transaksi",
+                                    "jumlah"
+                                ],
+                                "properties": {
+                                    "tanggal_transaksi": {
+                                        "type": "string",
+                                        "format": "date"
+                                    },
+                                    "jenis_transaksi": {
+                                        "type": "string",
+                                        "enum": [
+                                            "investasi_awal",
+                                            "penambahan_modal",
+                                            "pengambilan_modal"
+                                        ]
+                                    },
+                                    "jumlah": {
+                                        "type": "integer"
+                                    },
+                                    "keterangan": {
+                                        "type": "string",
+                                        "nullable": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Tersimpan, saldo berjalan dihitung ulang"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/umkm/saldo/{saldo}": {
+            "delete": {
+                "tags": [
+                    "UMKM Keuangan"
+                ],
+                "summary": "Hapus catatan modal",
+                "operationId": "000a28007a0b0973908057dee4544f73",
+                "parameters": [
+                    {
+                        "name": "saldo",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Terhapus, saldo dihitung ulang"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/umkm/produk/{produk}/stok": {
             "post": {
                 "tags": [
@@ -1351,6 +1613,10 @@
         {
             "name": "UMKM",
             "description": "UMKM"
+        },
+        {
+            "name": "UMKM Keuangan",
+            "description": "UMKM Keuangan"
         },
         {
             "name": "UMKM Produk",

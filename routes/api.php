@@ -9,8 +9,10 @@ use App\Http\Controllers\Api\ProdukController;
 use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\TokoController;
 use App\Http\Controllers\Api\Umkm\DashboardController as UmkmDashboard;
+use App\Http\Controllers\Api\Umkm\PengeluaranController as UmkmPengeluaran;
 use App\Http\Controllers\Api\Umkm\ProdukController as UmkmProduk;
 use App\Http\Controllers\Api\Umkm\ProfilController as UmkmProfil;
+use App\Http\Controllers\Api\Umkm\SaldoController as UmkmSaldo;
 use App\Http\Controllers\Api\Umkm\StokController as UmkmStok;
 use App\Http\Controllers\Api\Umkm\TransaksiController as UmkmTransaksi;
 use Illuminate\Support\Facades\Route;
@@ -33,6 +35,7 @@ Route::middleware('auth:sanctum')->prefix('master')->group(function () {
     Route::get('/jenis-usaha', [MasterController::class, 'jenisUsaha']);
     Route::get('/bank', [MasterController::class, 'bank']);
     Route::get('/kategori-produk', [MasterController::class, 'kategoriProduk']);
+    Route::get('/jenis-pengeluaran', [MasterController::class, 'jenisPengeluaran']);
 });
 
 Route::middleware(['auth:sanctum', 'role:umkm'])->prefix('umkm')->group(function () {
@@ -54,6 +57,13 @@ Route::middleware(['auth:sanctum', 'role:umkm'])->prefix('umkm')->group(function
     Route::post('/transaksi/{transaksi}/verifikasi', [UmkmTransaksi::class, 'verifikasi']);
     Route::post('/transaksi/{transaksi}/tolak', [UmkmTransaksi::class, 'tolak']);
     Route::post('/transaksi/{transaksi}/kirim', [UmkmTransaksi::class, 'kirim']);
+    Route::get('/saldo', [UmkmSaldo::class, 'index']);
+    Route::post('/saldo', [UmkmSaldo::class, 'store']);
+    Route::delete('/saldo/{saldo}', [UmkmSaldo::class, 'destroy']);
+    Route::get('/pengeluaran', [UmkmPengeluaran::class, 'index']);
+    Route::post('/pengeluaran', [UmkmPengeluaran::class, 'store']);
+    Route::get('/pengeluaran/{pengeluaran}', [UmkmPengeluaran::class, 'show']);
+    Route::delete('/pengeluaran/{pengeluaran}', [UmkmPengeluaran::class, 'destroy']);
 });
 
 Route::middleware(['auth:sanctum', 'role:customer'])->group(function () {

@@ -29,4 +29,11 @@ class MasterController extends ApiController
     {
         return $this->respond(KategoriProduk::orderBy('nama')->get());
     }
+
+    #[OA\Get(path: '/api/master/jenis-pengeluaran', tags: ['Master'], summary: 'Daftar jenis pengeluaran', security: [['bearerAuth' => []]],
+        responses: [new OA\Response(response: 200, description: 'Array jenis pengeluaran')])]
+    public function jenisPengeluaran()
+    {
+        return $this->respond(\App\Models\JenisPengeluaran::orderBy('nama')->get());
+    }
 }
