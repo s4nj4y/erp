@@ -12,6 +12,7 @@ use App\Http\Controllers\Api\Umkm\DashboardController as UmkmDashboard;
 use App\Http\Controllers\Api\Umkm\ProdukController as UmkmProduk;
 use App\Http\Controllers\Api\Umkm\ProfilController as UmkmProfil;
 use App\Http\Controllers\Api\Umkm\StokController as UmkmStok;
+use App\Http\Controllers\Api\Umkm\TransaksiController as UmkmTransaksi;
 use Illuminate\Support\Facades\Route;
 
 Route::post('/register', [AuthController::class, 'register']);
@@ -48,6 +49,11 @@ Route::middleware(['auth:sanctum', 'role:umkm'])->prefix('umkm')->group(function
     Route::patch('/produk/{produk}/toggle', [UmkmProduk::class, 'toggleStatus']);
     Route::post('/produk/{produk}/stok', [UmkmStok::class, 'store']);
     Route::delete('/stok/{stok}', [UmkmStok::class, 'destroy']);
+    Route::get('/transaksi', [UmkmTransaksi::class, 'index']);
+    Route::get('/transaksi/{transaksi}', [UmkmTransaksi::class, 'show']);
+    Route::post('/transaksi/{transaksi}/verifikasi', [UmkmTransaksi::class, 'verifikasi']);
+    Route::post('/transaksi/{transaksi}/tolak', [UmkmTransaksi::class, 'tolak']);
+    Route::post('/transaksi/{transaksi}/kirim', [UmkmTransaksi::class, 'kirim']);
 });
 
 Route::middleware(['auth:sanctum', 'role:customer'])->group(function () {
