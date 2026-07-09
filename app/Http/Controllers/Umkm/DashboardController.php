@@ -6,7 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Http\Controllers\Umkm\Concerns\ResolvesUmkm;
 use App\Models\Produk;
 use App\Models\Transaksi;
+use App\Models\TransaksiDetail;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 
 class DashboardController extends Controller
@@ -29,10 +31,10 @@ class DashboardController extends Controller
             $stats['pesanan'] = Transaksi::where('umkm_id', $umkm->id)->count();
             $stats['perlu_verifikasi'] = Transaksi::where('umkm_id', $umkm->id)
                 ->where('status_bayar', 'menunggu_verifikasi')->count();
-            $stats['pendapatan'] = Transaksi::where('umkm_id', $umkm->id)
-                ->where('status', 'selesai')
-                ->with('detail')->get()
-                ->sum(fn ($t) => $t->detail->sum(fn ($d) => $d->harga * $d->qty));
+            $stats['pendapatan'] = (int) TransaksiDetail::join('transaksi', 'transaksi.id', '=', 'transaksi_detail.transaksi_id')
+                ->where('transaksi.umkm_id', $umkm->id)
+                ->where('transaksi.status', 'selesai')
+                ->sum(DB::raw('transaksi_detail.harga * transaksi_detail.qty'));
         }
 
         return view('umkm.dashboard', compact('umkm', 'stats'));

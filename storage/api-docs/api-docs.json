@@ -734,6 +734,108 @@
                 }
             }
         },
+        "/api/umkm/analitik/tren": {
+            "get": {
+                "tags": [
+                    "UMKM Analitik"
+                ],
+                "summary": "Tren omzet & jumlah transaksi per hari/bulan (?periode=7d|30d|12m, default 30d)",
+                "operationId": "84a8eb3e4a7018ace5d6fe05b0ef0089",
+                "parameters": [
+                    {
+                        "name": "periode",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "7d",
+                                "30d",
+                                "12m"
+                            ]
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "labels/omzet/transaksi/total_omzet/total_transaksi"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/umkm/analitik/produk-terlaris": {
+            "get": {
+                "tags": [
+                    "UMKM Analitik"
+                ],
+                "summary": "Top 10 produk berdasarkan nilai penjualan (?periode=)",
+                "operationId": "5b183a626adf4b5ce6dd648669dce493",
+                "parameters": [
+                    {
+                        "name": "periode",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "7d",
+                                "30d",
+                                "12m"
+                            ]
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "rows: nama/terjual/nilai"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/umkm/analitik/pelanggan": {
+            "get": {
+                "tags": [
+                    "UMKM Analitik"
+                ],
+                "summary": "Top pelanggan + pelanggan baru vs lama (?periode=)",
+                "operationId": "94015e25da1fba904c061188d94c06ac",
+                "parameters": [
+                    {
+                        "name": "periode",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "7d",
+                                "30d",
+                                "12m"
+                            ]
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "top: nama/transaksi/belanja + pelanggan_baru/pelanggan_lama"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/umkm/dashboard": {
             "get": {
                 "tags": [
@@ -1735,6 +1837,10 @@
         {
             "name": "Profil",
             "description": "Profil"
+        },
+        {
+            "name": "UMKM Analitik",
+            "description": "UMKM Analitik"
         },
         {
             "name": "UMKM",

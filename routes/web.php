@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\AnalitikController as AdminAnalitik;
 use App\Http\Controllers\Admin\BankController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboard;
 use App\Http\Controllers\Admin\JenisPengeluaranController;
@@ -17,6 +18,7 @@ use App\Http\Controllers\Customer\HomeController;
 use App\Http\Controllers\Customer\TransaksiController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Umkm\AnalitikController as UmkmAnalitik;
 use App\Http\Controllers\Umkm\DashboardController as UmkmDashboard;
 use App\Http\Controllers\Umkm\LaporanController as UmkmLaporan;
 use App\Http\Controllers\Umkm\PengeluaranController as UmkmPengeluaran;
@@ -40,6 +42,7 @@ Route::get('/dashboard', [DashboardController::class, 'index'])
 // ---- Admin ----
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [AdminDashboard::class, 'index'])->name('dashboard');
+    Route::get('/analitik', [AdminAnalitik::class, 'index'])->name('analitik');
 
     // Master Data
     Route::resource('users', UserController::class)->except('show');
@@ -101,6 +104,9 @@ Route::middleware(['auth', 'role:umkm'])->prefix('umkm')->name('umkm.')->group(f
     Route::post('/pengeluaran', [UmkmPengeluaran::class, 'store'])->name('pengeluaran.store');
     Route::get('/pengeluaran/{pengeluaran}', [UmkmPengeluaran::class, 'show'])->name('pengeluaran.show');
     Route::delete('/pengeluaran/{pengeluaran}', [UmkmPengeluaran::class, 'destroy'])->name('pengeluaran.destroy');
+
+    // Analitik bisnis
+    Route::get('/analitik', [UmkmAnalitik::class, 'index'])->name('analitik');
 
     // Laporan (+ export pdf/excel via ?export=)
     Route::get('/laporan/laba-rugi', [UmkmLaporan::class, 'labaRugi'])->name('laporan.laba-rugi');

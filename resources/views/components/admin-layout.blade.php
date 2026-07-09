@@ -3,6 +3,7 @@
 @php
     $nav = [
         ['admin.dashboard', 'Dashboard', null, 'dashboard'],
+        ['admin.analitik', 'Analitik', 'admin.analitik', 'trending'],
         ['admin.umkm.index', 'UMKM', 'admin.umkm.*', 'store'],
         ['admin.produk.index', 'Produk', 'admin.produk.*', 'cube'],
         ['admin.users.index', 'Users', 'admin.users.*', 'users'],

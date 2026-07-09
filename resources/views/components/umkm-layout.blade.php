@@ -8,6 +8,7 @@
         ['umkm.saldo.index', 'Modal / Saldo', 'umkm.saldo.*', 'wallet'],
         ['umkm.pengeluaran.index', 'Pengeluaran', 'umkm.pengeluaran.*', 'banknotes'],
         ['umkm.laporan.laba-rugi', 'Laporan', 'umkm.laporan.*', 'chart'],
+        ['umkm.analitik', 'Analitik', 'umkm.analitik', 'trending'],
         ['umkm.profil.edit', 'Profil & Rekening', 'umkm.profil.*', 'user-circle'],
     ];
 @endphp
