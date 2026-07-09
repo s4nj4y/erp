@@ -11,6 +11,7 @@ use App\Http\Controllers\Api\TokoController;
 use App\Http\Controllers\Api\Umkm\AnalitikController as UmkmAnalitik;
 use App\Http\Controllers\Api\Umkm\DashboardController as UmkmDashboard;
 use App\Http\Controllers\Api\Umkm\PengeluaranController as UmkmPengeluaran;
+use App\Http\Controllers\Api\Umkm\PrediksiController as UmkmPrediksi;
 use App\Http\Controllers\Api\Umkm\ProdukController as UmkmProduk;
 use App\Http\Controllers\Api\Umkm\ProfilController as UmkmProfil;
 use App\Http\Controllers\Api\Umkm\SaldoController as UmkmSaldo;
@@ -69,6 +70,9 @@ Route::middleware(['auth:sanctum', 'role:umkm'])->prefix('umkm')->group(function
     Route::get('/analitik/tren', [UmkmAnalitik::class, 'tren']);
     Route::get('/analitik/produk-terlaris', [UmkmAnalitik::class, 'produkTerlaris']);
     Route::get('/analitik/pelanggan', [UmkmAnalitik::class, 'pelanggan']);
+    Route::get('/prediksi/omzet', [UmkmPrediksi::class, 'omzet']);
+    Route::get('/prediksi/stok-habis', [UmkmPrediksi::class, 'stokHabis']);
+    Route::get('/prediksi/produk-trending', [UmkmPrediksi::class, 'produkTrending']);
     Route::get('/laporan/laba-rugi', [UmkmLaporan::class, 'labaRugi']);
     Route::get('/laporan/pendapatan', [UmkmLaporan::class, 'pendapatan']);
     Route::get('/laporan/perubahan-modal', [UmkmLaporan::class, 'perubahanModal']);

@@ -1,18 +1,37 @@
 <x-admin-layout header="Analitik Platform">
     @php
         $rp = fn ($n) => 'Rp'.number_format($n, 0, ',', '.');
-        $labels = array_map(fn ($l) => strlen($l) === 7
+        $fmtLabel = fn ($l) => strlen($l) === 7
             ? \Illuminate\Support\Carbon::parse($l.'-01')->translatedFormat('M y')
-            : \Illuminate\Support\Carbon::parse($l)->format('d/m'), $pertumbuhan['labels']);
+            : \Illuminate\Support\Carbon::parse($l)->format('d/m');
+        $labels = array_map($fmtLabel, $pertumbuhan['labels']);
+
+        // Sambung garis proyeksi GMV (dashed) ke deret historis
+        $forecast = $prediksi['gmv'];
+        $labelsGmv = $forecast ? array_merge($labels, array_map($fmtLabel, $forecast['labels'])) : $labels;
+        $gmvHistori = $forecast
+            ? array_merge($pertumbuhan['gmv'], array_fill(0, count($forecast['nilai']), null))
+            : $pertumbuhan['gmv'];
+        $gmvProyeksi = $forecast
+            ? array_merge(array_fill(0, count($labels) - 1, null), [end($pertumbuhan['gmv'])], $forecast['nilai'])
+            : null;
         $grid = ['color' => 'rgba(0,0,0,.05)'];
         $sumbu = ['y' => ['beginAtZero' => true, 'grid' => $grid, 'ticks' => ['precision' => 0]], 'x' => ['grid' => ['display' => false]]];
+        $datasetGmv = [[
+            'label' => 'GMV (Rp)', 'data' => $gmvHistori,
+            'borderColor' => '#059669', 'backgroundColor' => 'rgba(5,150,105,.08)',
+            'borderWidth' => 2, 'fill' => true, 'tension' => 0.3, 'pointRadius' => 0, 'pointHitRadius' => 12,
+        ]];
+        if ($gmvProyeksi) {
+            $datasetGmv[] = [
+                'label' => 'Proyeksi', 'data' => $gmvProyeksi,
+                'borderColor' => '#059669', 'borderDash' => [6, 4],
+                'borderWidth' => 2, 'fill' => false, 'tension' => 0.3, 'pointRadius' => 0, 'pointHitRadius' => 12,
+            ];
+        }
         $chartGmv = ['type' => 'line',
-            'data' => ['labels' => $labels, 'datasets' => [[
-                'label' => 'GMV (Rp)', 'data' => $pertumbuhan['gmv'],
-                'borderColor' => '#059669', 'backgroundColor' => 'rgba(5,150,105,.08)',
-                'borderWidth' => 2, 'fill' => true, 'tension' => 0.3, 'pointRadius' => 0, 'pointHitRadius' => 12,
-            ]]],
-            'options' => ['plugins' => ['legend' => ['display' => false]], 'scales' => $sumbu]];
+            'data' => ['labels' => $labelsGmv, 'datasets' => $datasetGmv],
+            'options' => ['plugins' => ['legend' => ['display' => (bool) $gmvProyeksi]], 'scales' => $sumbu]];
         $chartDaftar = ['type' => 'bar',
             'data' => ['labels' => $labels, 'datasets' => [
                 ['label' => 'UMKM', 'data' => $pertumbuhan['umkm_baru'], 'backgroundColor' => '#059669', 'borderRadius' => 4],
@@ -46,6 +65,29 @@
             <h2 class="font-bold mb-4">Pendaftaran Baru</h2>
             <canvas height="220" data-chart='@json($chartDaftar)'></canvas>
         </div>
+    </div>
+
+    <div class="card p-6 mb-6 max-w-3xl">
+        <h2 class="font-bold mb-1">Prediksi Platform</h2>
+        @if ($forecast || $prediksi['umkm_baru'] || $prediksi['customer_baru'])
+            <p class="text-xs text-gray-500 mb-3">Proyeksi {{ ($forecast ?? $prediksi['umkm_baru'] ?? $prediksi['customer_baru'])['horizon'] }} ke depan (regresi linear)</p>
+            <div class="grid grid-cols-3 gap-4 text-center">
+                <div>
+                    <div class="text-xl font-bold text-emerald-600 tabular-nums">{{ $forecast ? $rp($forecast['total']) : '—' }}</div>
+                    <div class="text-sm text-gray-500 mt-1">GMV</div>
+                </div>
+                <div>
+                    <div class="text-xl font-bold text-gray-900 tabular-nums">{{ $prediksi['umkm_baru']['total'] ?? '—' }}</div>
+                    <div class="text-sm text-gray-500 mt-1">UMKM Baru</div>
+                </div>
+                <div>
+                    <div class="text-xl font-bold text-gray-900 tabular-nums">{{ $prediksi['customer_baru']['total'] ?? '—' }}</div>
+                    <div class="text-sm text-gray-500 mt-1">Customer Baru</div>
+                </div>
+            </div>
+        @else
+            <p class="text-sm text-gray-400 mt-3">Data belum cukup untuk prediksi (butuh riwayat pada periode ini).</p>
+        @endif
     </div>
 
     <div class="card p-6 max-w-3xl">

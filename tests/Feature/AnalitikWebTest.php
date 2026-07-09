@@ -17,7 +17,8 @@ class AnalitikWebTest extends TestCase
         Umkm::create(['user_id' => $pemilik->id, 'nama_umkm' => 'Toko', 'status' => true]);
 
         $this->actingAs($pemilik)->get('/umkm/analitik?periode=7d')
-            ->assertOk()->assertSee('Tren Omzet')->assertSee('Produk Terlaris');
+            ->assertOk()->assertSee('Tren Omzet')->assertSee('Produk Terlaris')
+            ->assertSee('Prediksi Omzet')->assertSee('Data penjualan belum cukup');
     }
 
     public function test_umkm_tanpa_profil_diarahkan_ke_profil(): void
@@ -32,7 +33,7 @@ class AnalitikWebTest extends TestCase
         $admin = User::factory()->create(['role' => 'admin']);
 
         $this->actingAs($admin)->get('/admin/analitik')
-            ->assertOk()->assertSee('Tren GMV')->assertSee('UMKM Teratas');
+            ->assertOk()->assertSee('Tren GMV')->assertSee('UMKM Teratas')->assertSee('Prediksi Platform');
     }
 
     public function test_umkm_tidak_boleh_akses_analitik_admin(): void

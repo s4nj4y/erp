@@ -5,13 +5,14 @@ namespace App\Http\Controllers\Umkm;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Umkm\Concerns\ResolvesUmkm;
 use App\Services\AnalitikService;
+use App\Services\PrediksiService;
 use Illuminate\Http\Request;
 
 class AnalitikController extends Controller
 {
     use ResolvesUmkm;
 
-    public function index(Request $request, AnalitikService $analitik)
+    public function index(Request $request, AnalitikService $analitik, PrediksiService $prediksiSvc)
     {
         $umkm = $this->umkm($request);
         if (! $umkm) {
@@ -29,6 +30,12 @@ class AnalitikController extends Controller
         $aov = $tren['total_transaksi'] > 0
             ? intdiv($tren['total_omzet'], $tren['total_transaksi']) : 0;
 
-        return view('umkm.analitik', compact('umkm', 'periode', 'tren', 'produk', 'pelanggan', 'aov'));
+        $prediksi = [
+            'omzet' => $prediksiSvc->forecastOmzet($umkm->id, $periode),
+            'stok' => $prediksiSvc->stokHabis($umkm->id),
+            'trending' => $prediksiSvc->produkTrending($umkm->id),
+        ];
+
+        return view('umkm.analitik', compact('umkm', 'periode', 'tren', 'produk', 'pelanggan', 'aov', 'prediksi'));
     }
 }

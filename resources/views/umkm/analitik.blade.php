@@ -2,19 +2,40 @@
     @php
         $rp = fn ($n) => 'Rp'.number_format($n, 0, ',', '.');
         // Label pendek: '05/07' untuk harian, 'Jul 25' untuk bulanan
-        $labels = array_map(fn ($l) => strlen($l) === 7
+        $fmtLabel = fn ($l) => strlen($l) === 7
             ? \Illuminate\Support\Carbon::parse($l.'-01')->translatedFormat('M y')
-            : \Illuminate\Support\Carbon::parse($l)->format('d/m'), $tren['labels']);
+            : \Illuminate\Support\Carbon::parse($l)->format('d/m');
+        $labels = array_map($fmtLabel, $tren['labels']);
+
+        // Sambung garis proyeksi (dashed) ke ujung deret historis
+        $forecast = $prediksi['omzet'];
+        $labelsOmzet = $forecast ? array_merge($labels, array_map($fmtLabel, $forecast['labels'])) : $labels;
+        $omzetHistori = $forecast
+            ? array_merge($tren['omzet'], array_fill(0, count($forecast['nilai']), null))
+            : $tren['omzet'];
+        $omzetProyeksi = $forecast
+            ? array_merge(array_fill(0, count($labels) - 1, null), [end($tren['omzet'])], $forecast['nilai'])
+            : null;
         $grid = ['color' => 'rgba(0,0,0,.05)'];
         $opsiChart = ['plugins' => ['legend' => ['display' => false]],
             'scales' => ['y' => ['beginAtZero' => true, 'grid' => $grid, 'ticks' => ['precision' => 0]], 'x' => ['grid' => ['display' => false]]]];
+        $datasetOmzet = [[
+            'label' => 'Omzet (Rp)', 'data' => $omzetHistori,
+            'borderColor' => '#059669', 'backgroundColor' => 'rgba(5,150,105,.08)',
+            'borderWidth' => 2, 'fill' => true, 'tension' => 0.3, 'pointRadius' => 0, 'pointHitRadius' => 12,
+        ]];
+        if ($omzetProyeksi) {
+            $datasetOmzet[] = [
+                'label' => 'Proyeksi', 'data' => $omzetProyeksi,
+                'borderColor' => '#059669', 'borderDash' => [6, 4],
+                'borderWidth' => 2, 'fill' => false, 'tension' => 0.3, 'pointRadius' => 0, 'pointHitRadius' => 12,
+            ];
+        }
         $chartOmzet = ['type' => 'line',
-            'data' => ['labels' => $labels, 'datasets' => [[
-                'label' => 'Omzet (Rp)', 'data' => $tren['omzet'],
-                'borderColor' => '#059669', 'backgroundColor' => 'rgba(5,150,105,.08)',
-                'borderWidth' => 2, 'fill' => true, 'tension' => 0.3, 'pointRadius' => 0, 'pointHitRadius' => 12,
-            ]]],
-            'options' => $opsiChart];
+            'data' => ['labels' => $labelsOmzet, 'datasets' => $datasetOmzet],
+            'options' => $omzetProyeksi
+                ? array_replace_recursive($opsiChart, ['plugins' => ['legend' => ['display' => true]]])
+                : $opsiChart];
         $chartTransaksi = ['type' => 'bar',
             'data' => ['labels' => $labels, 'datasets' => [[
                 'label' => 'Transaksi', 'data' => $tren['transaksi'],
@@ -47,6 +68,57 @@
         <div class="card p-6">
             <h2 class="font-bold mb-4">Jumlah Transaksi</h2>
             <canvas height="220" data-chart='@json($chartTransaksi)'></canvas>
+        </div>
+    </div>
+
+    <div class="grid lg:grid-cols-3 gap-4 mb-6">
+        <div class="card p-6">
+            <h2 class="font-bold mb-1">Prediksi Omzet</h2>
+            @if ($forecast)
+                <p class="text-xs text-gray-500 mb-3">Proyeksi {{ $forecast['horizon'] }} ke depan (regresi linear)</p>
+                <div class="text-2xl font-bold text-emerald-600 tabular-nums">{{ $rp($forecast['total']) }}</div>
+                <p class="text-sm text-gray-500 mt-2">Garis putus-putus pada grafik Tren Omzet menunjukkan proyeksi harian/bulanannya.</p>
+            @else
+                <p class="text-sm text-gray-400 mt-3">Data penjualan belum cukup untuk prediksi (butuh riwayat pada periode ini).</p>
+            @endif
+        </div>
+        <div class="card p-6">
+            <h2 class="font-bold mb-4">Stok Segera Habis</h2>
+            <table class="w-full text-sm">
+                <thead class="text-left text-gray-500">
+                    <tr><th class="py-2">Produk</th><th class="py-2 text-right">Stok</th><th class="py-2 text-right">± Habis Dalam</th></tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100">
+                    @forelse ($prediksi['stok'] as $s)
+                        <tr>
+                            <td class="py-2">{{ $s->nama }}</td>
+                            <td class="py-2 text-right tabular-nums">{{ $s->stok }}</td>
+                            <td class="py-2 text-right tabular-nums {{ $s->hari_tersisa <= 7 ? 'text-red-500 font-medium' : '' }}">{{ $s->hari_tersisa }} hari</td>
+                        </tr>
+                    @empty
+                        <tr><td colspan="3" class="py-6 text-center text-gray-400">Belum ada penjualan 30 hari terakhir.</td></tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+        <div class="card p-6">
+            <h2 class="font-bold mb-4">Produk Trending</h2>
+            <table class="w-full text-sm">
+                <thead class="text-left text-gray-500">
+                    <tr><th class="py-2">Produk</th><th class="py-2 text-right">Terjual 30 Hari</th><th class="py-2 text-right">Momentum</th></tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100">
+                    @forelse ($prediksi['trending'] as $t)
+                        <tr>
+                            <td class="py-2">{{ $t->nama }}</td>
+                            <td class="py-2 text-right tabular-nums">{{ $t->terjual }}</td>
+                            <td class="py-2 text-right tabular-nums text-emerald-600">+{{ $t->slope }}/hari</td>
+                        </tr>
+                    @empty
+                        <tr><td colspan="3" class="py-6 text-center text-gray-400">Belum ada produk dengan tren naik.</td></tr>
+                    @endforelse
+                </tbody>
+            </table>
         </div>
     </div>
 

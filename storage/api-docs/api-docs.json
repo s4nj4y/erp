@@ -1111,6 +1111,78 @@
                 ]
             }
         },
+        "/api/umkm/prediksi/omzet": {
+            "get": {
+                "tags": [
+                    "UMKM Prediksi"
+                ],
+                "summary": "Proyeksi omzet 7 hari / 3 bulan ke depan, regresi linear (?periode=7d|30d|12m). Null bila data belum cukup.",
+                "operationId": "8bd53fff93c1616f61393ae16f70d202",
+                "parameters": [
+                    {
+                        "name": "periode",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "7d",
+                                "30d",
+                                "12m"
+                            ]
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "forecast: labels/nilai/total/horizon | null"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/umkm/prediksi/stok-habis": {
+            "get": {
+                "tags": [
+                    "UMKM Prediksi"
+                ],
+                "summary": "Estimasi produk yang stoknya segera habis dari laju jual 30 hari",
+                "operationId": "d635fba3bc27839cc258e2763ae7403c",
+                "responses": {
+                    "200": {
+                        "description": "rows: nama/stok/laju/hari_tersisa"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/umkm/prediksi/produk-trending": {
+            "get": {
+                "tags": [
+                    "UMKM Prediksi"
+                ],
+                "summary": "Produk dengan momentum penjualan naik (slope regresi 30 hari)",
+                "operationId": "c105d58495690f619d77e7f43325cf1c",
+                "responses": {
+                    "200": {
+                        "description": "rows: nama/terjual/slope"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/umkm/produk": {
             "get": {
                 "tags": [
@@ -1853,6 +1925,10 @@
         {
             "name": "UMKM Keuangan",
             "description": "UMKM Keuangan"
+        },
+        {
+            "name": "UMKM Prediksi",
+            "description": "UMKM Prediksi"
         },
         {
             "name": "UMKM Produk",
