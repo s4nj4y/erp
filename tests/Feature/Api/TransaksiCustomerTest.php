@@ -90,6 +90,18 @@ class TransaksiCustomerTest extends TestCase
         ], ['Accept' => 'application/json'])->assertUnprocessable();
     }
 
+    public function test_upload_bukti_transaksi_customer_lain_404(): void
+    {
+        Storage::fake('public');
+        $lain = User::factory()->create(['role' => 'customer']);
+
+        $this->actingAs($lain, 'sanctum')->post("/api/transaksi/{$this->trx->id}/bukti", [
+            'bukti_pembayaran' => UploadedFile::fake()->image('bukti.jpg'),
+        ], ['Accept' => 'application/json'])->assertNotFound();
+
+        $this->assertNull($this->trx->fresh()->bukti_pembayaran);
+    }
+
     public function test_terima_pesanan_mengubah_status(): void
     {
         $this->actingAs($this->customer, 'sanctum')

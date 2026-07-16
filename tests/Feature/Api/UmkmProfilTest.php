@@ -46,6 +46,15 @@ class UmkmProfilTest extends TestCase
         $this->actingAs($customer, 'sanctum')->getJson('/api/master/bank')
             ->assertOk()->assertJsonPath('data.0.nama_bank', 'BRI');
         $this->actingAs($customer, 'sanctum')->getJson('/api/master/kategori-produk')->assertOk();
+        $this->actingAs($customer, 'sanctum')->getJson('/api/master/jenis-pengeluaran')->assertOk();
+    }
+
+    public function test_lihat_profil(): void
+    {
+        Umkm::create(['user_id' => $this->pemilik->id, 'nama_umkm' => 'Toko', 'status' => true]);
+
+        $this->actingAs($this->pemilik, 'sanctum')->getJson('/api/umkm/profil')
+            ->assertOk()->assertJsonPath('data.nama_umkm', 'Toko');
     }
 
     public function test_dashboard_tanpa_profil_umkm_mengembalikan_null(): void

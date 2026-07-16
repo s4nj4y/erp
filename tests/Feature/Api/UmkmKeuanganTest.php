@@ -91,4 +91,24 @@ class UmkmKeuanganTest extends TestCase
 
         $this->actingAs($this->pemilik, 'sanctum')->getJson("/api/umkm/pengeluaran/{$p->id}")->assertNotFound();
     }
+
+    public function test_hapus_pengeluaran(): void
+    {
+        $p = TransaksiPengeluaran::create(['umkm_id' => $this->umkm->id,
+            'tanggal_pengeluaran' => '2026-07-04', 'total_harga' => 5000]);
+
+        $this->actingAs($this->pemilik, 'sanctum')->deleteJson("/api/umkm/pengeluaran/{$p->id}")->assertOk();
+        $this->assertDatabaseCount('transaksi_pengeluaran', 0);
+    }
+
+    public function test_hapus_pengeluaran_umkm_lain_404(): void
+    {
+        $lain = User::factory()->create(['role' => 'umkm']);
+        $umkmLain = Umkm::create(['user_id' => $lain->id, 'nama_umkm' => 'Lain', 'status' => true]);
+        $p = TransaksiPengeluaran::create(['umkm_id' => $umkmLain->id,
+            'tanggal_pengeluaran' => '2026-07-04', 'total_harga' => 1]);
+
+        $this->actingAs($this->pemilik, 'sanctum')->deleteJson("/api/umkm/pengeluaran/{$p->id}")->assertNotFound();
+        $this->assertDatabaseCount('transaksi_pengeluaran', 1);
+    }
 }

@@ -73,6 +73,37 @@ class UmkmProdukTest extends TestCase
         $this->assertDatabaseCount('produk', 0);
     }
 
+    public function test_detail_produk(): void
+    {
+        $p = $this->buatProduk();
+
+        $this->actingAs($this->pemilik, 'sanctum')->getJson("/api/umkm/produk/{$p->id}")
+            ->assertOk()->assertJsonPath('data.nama_produk', 'Keripik');
+    }
+
+    public function test_detail_produk_umkm_lain_404(): void
+    {
+        $lain = User::factory()->create(['role' => 'umkm']);
+        $umkmLain = Umkm::create(['user_id' => $lain->id, 'nama_umkm' => 'Lain', 'status' => true]);
+        $p = Produk::create(['umkm_id' => $umkmLain->id, 'nama_produk' => 'X', 'harga' => 1, 'stok' => 1, 'show' => true]);
+
+        $this->actingAs($this->pemilik, 'sanctum')->getJson("/api/umkm/produk/{$p->id}")->assertNotFound();
+    }
+
+    public function test_update_mengabaikan_umkm_id_kiriman(): void
+    {
+        $p = $this->buatProduk();
+        $lain = User::factory()->create(['role' => 'umkm']);
+        $umkmLain = Umkm::create(['user_id' => $lain->id, 'nama_umkm' => 'Lain', 'status' => true]);
+
+        $this->actingAs($this->pemilik, 'sanctum')->putJson("/api/umkm/produk/{$p->id}", [
+            'nama_produk' => 'Keripik', 'harga_modal' => 5000, 'harga' => 10000, 'stok' => 5,
+            'umkm_id' => $umkmLain->id,
+        ])->assertOk();
+
+        $this->assertSame($this->umkm->id, $p->fresh()->umkm_id);
+    }
+
     public function test_produk_umkm_lain_404(): void
     {
         $lain = User::factory()->create(['role' => 'umkm']);

@@ -70,4 +70,28 @@ class AuthTest extends TestCase
         $this->withToken($token)->postJson('/api/logout')->assertOk();
         $this->assertSame(0, $user->tokens()->count());
     }
+
+    public function test_token_ditolak_setelah_logout(): void
+    {
+        $user = User::factory()->create();
+        $token = $user->createToken('mobile')->plainTextToken;
+
+        $this->withToken($token)->postJson('/api/logout')->assertOk();
+
+        // reset guard yang meng-cache user pada request pertama dalam proses tes yang sama
+        $this->app['auth']->forgetGuards();
+        $this->flushHeaders();
+        $this->withToken($token)->getJson('/api/profile')->assertUnauthorized();
+    }
+
+    public function test_update_profile_mengabaikan_field_role(): void
+    {
+        $user = User::factory()->create(['role' => 'customer']);
+
+        $this->actingAs($user, 'sanctum')->patchJson('/api/profile', [
+            'name' => 'Nama Baru', 'role' => 'umkm',
+        ])->assertOk();
+
+        $this->assertSame('customer', $user->fresh()->role);
+    }
 }
