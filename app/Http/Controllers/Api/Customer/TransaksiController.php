@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\ApiController;
 use App\Models\Transaksi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\ValidationException;
 use OpenApi\Attributes as OA;
 
 class TransaksiController extends ApiController
@@ -50,6 +51,9 @@ class TransaksiController extends ApiController
     public function uploadBukti(Request $request, Transaksi $transaksi)
     {
         $this->authorize('viewAsCustomer', $transaksi);
+        if (! $transaksi->bolehUnggahBukti()) {
+            throw ValidationException::withMessages(['bukti_pembayaran' => 'Pembayaran sudah diverifikasi; bukti tidak dapat diganti.']);
+        }
         $request->validate(['bukti_pembayaran' => 'required|image|max:2048']);
 
         if ($transaksi->bukti_pembayaran) {
@@ -69,6 +73,9 @@ class TransaksiController extends ApiController
     public function terima(Request $request, Transaksi $transaksi)
     {
         $this->authorize('viewAsCustomer', $transaksi);
+        if (! $transaksi->bolehTerima()) {
+            throw ValidationException::withMessages(['status' => 'Pesanan belum dikirim.']);
+        }
         $transaksi->update(['status' => 'selesai']);
 
         return $this->respond($transaksi->fresh(), 'Pesanan ditandai diterima.');

@@ -34,6 +34,9 @@ class TransaksiController extends Controller
     public function uploadBukti(Request $request, Transaksi $transaksi): RedirectResponse
     {
         $this->authorize('viewAsCustomer', $transaksi);
+        if (! $transaksi->bolehUnggahBukti()) {
+            return back()->withErrors(['bukti_pembayaran' => 'Pembayaran sudah diverifikasi; bukti tidak dapat diganti.']);
+        }
         $request->validate(['bukti_pembayaran' => 'required|image|max:2048']);
 
         if ($transaksi->bukti_pembayaran) {
@@ -50,6 +53,9 @@ class TransaksiController extends Controller
     public function terima(Request $request, Transaksi $transaksi): RedirectResponse
     {
         $this->authorize('viewAsCustomer', $transaksi);
+        if (! $transaksi->bolehTerima()) {
+            return back()->withErrors(['status' => 'Pesanan belum dikirim.']);
+        }
         $transaksi->update(['status' => 'selesai']);
 
         return back()->with('success', 'Pesanan ditandai diterima.');

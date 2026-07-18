@@ -104,10 +104,21 @@ class TransaksiCustomerTest extends TestCase
 
     public function test_terima_pesanan_mengubah_status(): void
     {
+        $this->trx->update(['status' => 'dikirim', 'status_bayar' => 'terverifikasi']);
+
         $this->actingAs($this->customer, 'sanctum')
             ->postJson("/api/transaksi/{$this->trx->id}/terima")
             ->assertOk();
 
         $this->assertSame('selesai', $this->trx->fresh()->status);
+    }
+
+    public function test_terima_pesanan_belum_dikirim_422(): void
+    {
+        $this->actingAs($this->customer, 'sanctum')
+            ->postJson("/api/transaksi/{$this->trx->id}/terima")
+            ->assertUnprocessable();
+
+        $this->assertNotSame('selesai', $this->trx->fresh()->status);
     }
 }

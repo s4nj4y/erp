@@ -41,4 +41,14 @@ class Transaksi extends Model
     {
         return $this->status === 'diproses';
     }
+
+    public function bolehTerima(): bool
+    {
+        return $this->status === 'dikirim';
+    }
+
+    public function bolehUnggahBukti(): bool
+    {
+        return in_array($this->status_bayar, ['belum', 'menunggu_verifikasi'], true);
+    }
 }
