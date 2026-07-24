@@ -1,58 +1,190 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# IBC Store — ERP & Marketplace UMKM
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Aplikasi ERP sekaligus direktori toko untuk UMKM binaan Inkubator Bisnis Center (IBC). Dibangun dengan Laravel 13, mencakup katalog publik, transaksi dengan verifikasi pembayaran manual, pembukuan keuangan, laporan, serta analitik & prediksi bisnis. Tersedia juga REST API (Sanctum) untuk aplikasi mobile.
 
-## About Laravel
+## Fitur
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- **Katalog publik** — direktori toko UMKM dan produk, bisa diakses tanpa login
+- **Multi-role** — `admin` (kelola master data, user, UMKM), `umkm` (kelola toko sendiri), `customer` (belanja)
+- **Transaksi** — keranjang → checkout per toko → upload bukti transfer → verifikasi oleh UMKM → kirim → diterima
+- **Keuangan UMKM** — pencatatan saldo/modal, pengeluaran, dan transaksi keuangan otomatis
+- **Laporan** — laba rugi, pendapatan, perubahan modal; ekspor PDF (dompdf) dan Excel (maatwebsite/excel)
+- **Analitik & prediksi** — tren penjualan, produk terlaris, pelanggan; prediksi omzet, stok habis, dan produk trending (php-ml)
+- **REST API** — endpoint untuk customer & UMKM dengan otentikasi Laravel Sanctum, terdokumentasi via Swagger (l5-swagger)
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Alur Sistem
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### Alur transaksi (inti)
 
-## Learning Laravel
-
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
-
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
-
-## Agentic Development
-
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
-
-```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+```mermaid
+flowchart LR
+    A[Customer:\nkeranjang & checkout] --> B[Transaksi dibuat\nstatus: pending / belum bayar]
+    B --> C[Customer upload\nbukti transfer]
+    C --> D{UMKM\nverifikasi}
+    D -- tolak --> E[ditolak]
+    D -- terima --> F[diproses / lunas]
+    F --> G[UMKM kirim\npesanan: dikirim]
+    G --> H[Customer terima\npesanan: selesai]
+    B -. kadaluarsa/batal .-> X[dibatalkan]
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+### Arsitektur
 
-## Contributing
+```mermaid
+flowchart TB
+    subgraph Client
+        W[Browser\nBlade + Alpine + Tailwind]
+        M[Aplikasi Mobile\nFlutter]
+    end
+    subgraph Laravel["Laravel 13 (PHP 8.3)"]
+        R1[Routes web\nsession auth + role middleware]
+        R2[Routes api\nSanctum token + role middleware]
+        C1[Controllers\nAdmin / Umkm / Customer / Api]
+        MD[Eloquent Models + Policies]
+    end
+    DB[(SQLite / MySQL)]
+    W --> R1 --> C1
+    M --> R2 --> C1
+    C1 --> MD --> DB
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+## Quick Start
 
-## Code of Conduct
+### Prasyarat
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+- PHP ≥ 8.3 (ekstensi: sqlite3, gd, zip)
+- Composer
+- Node.js ≥ 20 + npm
 
-## Security Vulnerabilities
+### Instalasi
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+```bash
+# 1. Clone dan pasang dependensi
+git clone https://github.com/s4nj4y/erp.git ibc-laravel
+cd ibc-laravel
+composer install
+npm install
 
-## License
+# 2. Konfigurasi environment
+cp .env.example .env
+php artisan key:generate
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+# 3. Siapkan database (default: SQLite, tanpa setup server)
+touch database/database.sqlite
+php artisan migrate --seed
+
+# 4. Build aset frontend
+npm run build
+
+# 5. Jalankan
+php artisan serve
+```
+
+Buka `http://localhost:8000`. Seeder membuat data demo (UMKM dan produk contoh) beserta tiga akun — password semuanya `password`:
+
+| Role | Email |
+|---|---|
+| Admin | `admin@ibc.test` |
+| UMKM | `umkm@ibc.test` |
+| Customer | `customer@ibc.test` |
+
+💡 Untuk pengembangan, jalankan `npm run dev` (Vite HMR) berdampingan dengan `php artisan serve`.
+
+### Verifikasi
+
+```bash
+php artisan test
+```
+
+Seluruh 168 tes harus hijau (423 assertion).
+
+## Konfigurasi
+
+Semua konfigurasi lewat `.env`. Item yang relevan untuk proyek ini:
+
+| Variabel | Wajib | Keterangan |
+|---|---|---|
+| `APP_KEY` | ✅ | Dibuat otomatis oleh `php artisan key:generate` |
+| `APP_URL` | ✅ | URL dasar aplikasi, mis. `http://localhost:8000` |
+| `DB_CONNECTION` | ✅ | Default `sqlite`; ganti ke `mysql` + isi `DB_HOST/DB_DATABASE/DB_USERNAME/DB_PASSWORD` untuk produksi |
+| `L5_SWAGGER_CONST_HOST` | ⬜ | Host yang tampil di dokumentasi Swagger (default `http://localhost:8000`) |
+| `SESSION_DRIVER`, `QUEUE_CONNECTION`, `CACHE_STORE` | ⬜ | Default `database`, tidak perlu diubah untuk lokal |
+
+⚠️ Jangan pernah commit file `.env`.
+
+## REST API
+
+- Base URL: `/api`
+- Otentikasi: Bearer token (Sanctum) via `POST /api/login` atau `POST /api/register`
+- Dokumentasi interaktif: `php artisan l5-swagger:generate` lalu buka `/api/documentation`
+
+Contoh:
+
+```bash
+# Login
+curl -X POST http://localhost:8000/api/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"user@example.com","password":"password"}'
+
+# Daftar produk (publik)
+curl http://localhost:8000/api/produk
+
+# Dashboard UMKM (butuh token role umkm)
+curl http://localhost:8000/api/umkm/dashboard -H "Authorization: Bearer <token>"
+```
+
+Grup endpoint: publik (`/toko`, `/produk`), `/master/*` (data referensi), `/umkm/*` (produk, stok, transaksi, saldo, pengeluaran, analitik, prediksi, laporan), dan customer (`/keranjang`, `/checkout`, `/transaksi`).
+
+## Perintah Umum
+
+```bash
+php artisan serve              # jalankan server dev
+npm run dev                    # Vite dev server (HMR)
+npm run build                  # build aset produksi
+php artisan test               # jalankan seluruh tes
+php artisan migrate:fresh --seed   # reset database + data demo
+php artisan l5-swagger:generate    # regenerasi dokumentasi API
+vendor/bin/pint                # format kode (Laravel Pint)
+```
+
+## Tech Stack
+
+| Lapisan | Teknologi |
+|---|---|
+| Backend | Laravel 13, PHP 8.3 |
+| Auth | Laravel Breeze (web/session), Sanctum (API token) |
+| Frontend | Blade, Alpine.js, Tailwind CSS, Vite, Chart.js |
+| Database | SQLite (default) / MySQL |
+| Laporan | barryvdh/laravel-dompdf (PDF), maatwebsite/excel (Excel) |
+| Prediksi | php-ai/php-ml (regresi untuk prediksi omzet/stok/trending) |
+| Dokumentasi API | darkaonline/l5-swagger |
+| Testing | PHPUnit 12 (168 tes) |
+
+## Struktur Proyek
+
+```
+app/
+├── Http/Controllers/
+│   ├── Admin/        # dashboard, master data, kelola UMKM & produk
+│   ├── Umkm/         # produk, stok, transaksi, keuangan, laporan, analitik
+│   ├── Customer/     # keranjang, checkout, transaksi
+│   └── Api/          # mitra REST API dari controller di atas
+├── Models/           # Umkm, Produk, Transaksi, Saldo, dst.
+routes/
+├── web.php           # rute web per role (middleware auth + role)
+└── api.php           # rute API (Sanctum)
+database/
+├── migrations/       # skema domain di satu migrasi utama
+└── seeders/          # data demo UMKM & produk
+tests/                # Feature & Unit (168 tes)
+```
+
+## Catatan Penting
+
+- Verifikasi pembayaran **manual**: customer transfer ke rekening UMKM lalu upload bukti; tidak ada payment gateway.
+- Checkout dilakukan **per toko** — keranjang lintas UMKM dipecah per checkout.
+- Otorisasi memakai Laravel Policy: UMKM hanya bisa mengelola data toko miliknya sendiri.
+
+## Lisensi
+
+MIT
