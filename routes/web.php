@@ -27,12 +27,14 @@ use App\Http\Controllers\Umkm\SaldoController as UmkmSaldo;
 use App\Http\Controllers\Umkm\ProfilController as UmkmProfil;
 use App\Http\Controllers\Umkm\StokController as UmkmStok;
 use App\Http\Controllers\Umkm\TransaksiController as UmkmTransaksi;
+use App\Models\Umkm;
 use Illuminate\Support\Facades\Route;
 
 // ---- Publik / Customer (katalog) ----
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/shop', [HomeController::class, 'shop'])->name('shop');
-Route::get('/toko/{umkm}', [HomeController::class, 'toko'])->name('toko.show');
+// URL lama by id → redirect permanen ke URL slug.
+Route::get('/toko/{umkm}', fn (Umkm $umkm) => redirect()->route('toko.slug', $umkm->slug, 301))->name('toko.show');
 Route::get('/produk/{produk}', [HomeController::class, 'show'])->name('produk.show');
 
 // ---- Redirect dashboard sesuai role ----
@@ -139,3 +141,8 @@ Route::middleware('auth')->group(function () {
 });
 
 require __DIR__.'/auth.php';
+
+// ---- Landing toko per-UMKM: store.ib-center.com/{slug} ----
+// Wajib paling akhir agar semua route tetap (/shop, /login, /admin, dll.) menang.
+Route::get('/{umkm:slug}', [HomeController::class, 'toko'])
+    ->where('umkm', '[a-z0-9-]+')->name('toko.slug');

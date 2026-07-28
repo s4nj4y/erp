@@ -35,4 +35,27 @@ class TokoSlugTest extends TestCase
         $umkm->update(['nama_umkm' => 'Dapur Baru']);
         $this->assertSame('dapur-lampung', $umkm->fresh()->slug);
     }
+
+    public function test_halaman_toko_bisa_diakses_via_slug(): void
+    {
+        $this->buatUmkm();
+        $this->get('/dapur-lampung')->assertOk()->assertSee('Dapur Lampung');
+    }
+
+    public function test_url_toko_lama_redirect_permanen_ke_slug(): void
+    {
+        $umkm = $this->buatUmkm();
+        $this->get('/toko/'.$umkm->id)->assertStatus(301)->assertRedirect('/dapur-lampung');
+    }
+
+    public function test_slug_tidak_dikenal_404(): void
+    {
+        $this->get('/toko-tidak-ada')->assertNotFound();
+    }
+
+    public function test_toko_nonaktif_404_via_slug(): void
+    {
+        $this->buatUmkm(['status' => false]);
+        $this->get('/dapur-lampung')->assertNotFound();
+    }
 }
