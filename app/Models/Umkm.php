@@ -14,6 +14,27 @@ class Umkm extends Model
 
     protected $casts = ['status' => 'boolean', 'tgl_pendirian' => 'date'];
 
+    protected static function booted(): void
+    {
+        // Slug dibuat sekali saat create dan stabil selamanya (URL yang tersebar tidak mati).
+        static::creating(function (Umkm $umkm) {
+            $umkm->slug = $umkm->slug ?: static::uniqueSlug($umkm->nama_umkm);
+        });
+    }
+
+    /** Slug unik dari nama toko; tabrakan diberi akhiran -2, -3, dst. */
+    public static function uniqueSlug(string $nama): string
+    {
+        $base = Str::slug($nama) ?: 'toko';
+        $slug = $base;
+        $i = 2;
+        while (static::where('slug', $slug)->exists()) {
+            $slug = $base.'-'.$i++;
+        }
+
+        return $slug;
+    }
+
     /** URL foto: dukung path upload di storage maupun URL absolut. */
     public function getFotoUrlAttribute(): ?string
     {
